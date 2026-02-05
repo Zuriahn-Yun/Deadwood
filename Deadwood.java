@@ -1,33 +1,185 @@
 import java.util.*;
 
+// Game System Class 
 public class Deadwood{
+    private ArrayList<Player> players = new ArrayList<>();
+    private Player current_Player;
+    // Array list of Array List to hold the board and positions for now
+    private ArrayList<ArrayList<String>> board;
 
-    // Cannot be name system our causes System.out.prinln to error due to reference bug 
-    public class Game{
+    // Getters
+    public ArrayList<ArrayList<String>> getBoard() {
+        return board;
+    }
+    public Player getCurrent_Player() {
+        return current_Player;
+    }
+    public ArrayList<Player> getPlayers() {
+        return players;
+    }
+    // Setters
+    public void setBoard(ArrayList<ArrayList<String>> board) {
+        this.board = board;
+    }
+    public void setCurrent_Player(Player current_Player) {
+        this.current_Player = current_Player;
+    }
+    public void setPlayers(ArrayList<Player> players) {
+        this.players = players;
+    }
+
+    // TODO Variables, Getters, Setters, Methods
+    public class ScoreCounter{
 
     }
-    public class Set{
 
-    }
+    /**
+    * Casting Office Class. In Charge of Player upgrades with credit or dollars.
+    * 
+    */
+    public class CastingOffice{
+        // Key: Upgrade leve, Value: Cost in Dollars
+        private Map<Integer,Integer> dollarUpgradeMap = Map.of(
+            2,4,
+            3,10,
+            4,18,
+            5,28,
+            6,40
+        );
+        
+        // Key: Upgrade level, Value: Cost in Credits
+        private Map<Integer,Integer> creditUpgradeMap = Map.of(
+            2,5,
+            3,10,
+            4,15,
+            5,20,
+            6,25
+        );        
+        // Method to Upgrade Player Object to an arbitrary level when paying with dollars
+        public void dollarUpgradePlayer(Player player,int level) {
+            if(player.getDollars() < dollarUpgradeMap.get(level)){
+                throw new IllegalAccessError("Player Does Not Have Enough Dollars");
+            }else{
+                player.setDollars(player.getDollars() - dollarUpgradeMap.get(level));
+                System.out.println("Player is now upgraded to Level: "+ level);
+            }
+        }
+        // Method to Upgrade Player Object to an arbitrary level when paying with credits
+        public void creditUpgradePlayer(Player player,int level){
+            if(player.getCredits() < creditUpgradeMap.get(level)){
+                throw new IllegalAccessError("Player Does Not Have Enough Credits");
+            }else{
+                player.setCredits(player.getCredits() - creditUpgradeMap.get(level));
+                System.out.println("Player is now upgraded to Level: "+ level);
+            }
+        }
+
+        }
+    
+    //TODO Player Methods and LOGIC
     public class Player{
-
+        private String name;
+        private int rank;
+        private int dollars;
+        private int credits;
+        private Role role;
+            
+        // Getters for Player Class
+        public int getCredits() {
+            return credits;
+        }
+        public String getName() {
+            return name;
+        }
+        public int getRank() {
+            return rank;
+        }
+        public int getDollars() {
+            return dollars;
+        }
+        public Role getRole() {
+            return role;
+        }
+        // Setters for Player Class
+        public void setCredits(int credits) {
+            this.credits = credits;
+        }
+        public void setDollars(int dollars) {
+            this.dollars = dollars;
+        }
+        public void setName(String name) {
+            this.name = name;
+        }
+        public void setRank(int rank) {
+            this.rank = rank;
+        }
+        public void setRole(Role role) {
+            this.role = role;
+        }
     }
-
-    // Dice Class
+    // TODO Role Methods and Logic
+    public class Role{
+        private String name;
+        private int rank;
+        private boolean occupied = false;
+        // Setters
+        public void setName(String name) {
+            this.name = name;
+        }
+        public void setOccupied(boolean occupied) {
+            this.occupied = occupied;
+        }
+        public void setRank(int rank) {
+            this.rank = rank;
+        }
+        // Getters
+        public String getName() {
+            return name;
+        }
+        public int getRank() {
+            return rank;
+        }
+        public boolean getOccupied(){
+            return occupied;
+        }
+    }
+    // TODO Scene Methods and Logic 
+    public class Scenes {
+        private ArrayList<String> roles = new ArrayList<>();
+        private int budget;
+        
+        // Setters
+        public void setRoles(ArrayList<String> roles) {
+            this.roles = roles;
+        }
+        public void setBudget(int budget) {
+            this.budget = budget;
+        }
+        // Getters
+        public int getBudget() {
+            return budget;
+        }
+        public ArrayList<String> getRoles() {
+            return roles;
+        }
+    }
+    /*
+    * Dice Class. For use by Player Object when Dice need to be rolled.
+    */
     public class Dice{
         // Create a Random Instance
         private static Random random = new Random();
+        // Roll the dice, Max = 6 , Min = 1
         public static int roll(){
             return random.nextInt(6) + 1;
         }
     }
-
     public static void main(String[] args) {
+        // Test
         System.out.println("Start Game");
         Deadwood game = new Deadwood();
         Dice dice = game.new Dice();
         System.out.println(dice.roll());
-
     }
 
 }
