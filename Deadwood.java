@@ -1,5 +1,11 @@
 import java.util.*;
 
+/*
+* CSCI 345 Deadwood Assignment
+* Zuriahn Yun and Amy Pham 
+*/
+
+
 // Game System Class 
 public class Deadwood {
     private ArrayList<Player> players = new ArrayList<>();
