@@ -46,11 +46,6 @@ public class Deadwood{
         this.players = players;
     }
 
-    // TODO Variables, Getters, Setters, Methods
-    public class ScoreCounter{
-
-    }
-
     /**
     * Casting Office Class. In Charge of Player upgrades with credit or dollars.
     * 
@@ -94,7 +89,6 @@ public class Deadwood{
 
         }
     
-    //TODO Player Methods and LOGIC
     public class Player{
         private String name;
         private int rank;
@@ -172,7 +166,7 @@ public class Deadwood{
             this.neighbors = neighbors;
         }
     }
-    // TODO Role Methods and Logic
+    
     public class Role{
         private String name;
         private int rank;
@@ -198,11 +192,10 @@ public class Deadwood{
             return occupied;
         }
     }
-    // TODO Scene Methods and Logic 
+
     public class Scenes {
         private ArrayList<String> roles = new ArrayList<>();
         private int budget;
-        
         // Setters
         public void setRoles(ArrayList<String> roles) {
             this.roles = roles;
@@ -231,23 +224,12 @@ public class Deadwood{
     }
     
     public static void main(String[] args) {
-        try {
-            int numPlayers = Integer.parseInt(args[0]);
-            if (numPlayers < 2 || numPlayers > 8) {
-                System.out.println("Not enough players (2-8)");
-                return;
-        }
-            Deadwood game = new Deadwood(numPlayers);
-            System.out.println("Start Game with " + numPlayers + " players.");
-            System.out.println("Active Player: " + game.getCurrent_Player().getName());
-        } catch (NumberFormatException e) {
-            System.out.println("Please provide a valid integer.");
-        }
-        // Test
-        // System.out.println("Start Game");
-        // Deadwood game = new Deadwood();
-        // Dice dice = game.new Dice();
-        // System.out.println(dice.roll());
+        System.out.println("Testing Game Initialization");
+        int numPlayers = 2;
+        // Test Game initializi
+        Deadwood game = new Deadwood(numPlayers);
+        System.out.println("Start Game with " + numPlayers + " players.");
+        System.out.println("Active Player: " + game.getCurrent_Player().getName());
     }
 
 }
