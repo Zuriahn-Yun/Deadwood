@@ -231,14 +231,12 @@ public class Deadwood{
     }
     
     public static void main(String[] args) {
-        // accept single parameter: number of players 
-        if (args.length < 1) {
-            System.out.println("Not enough players (2-8)"); 
-            return;
-        }
-        
         try {
             int numPlayers = Integer.parseInt(args[0]);
+            if (numPlayers < 2 || numPlayers > 8) {
+                System.out.println("Not enough players (2-8)");
+                return;
+        }
             Deadwood game = new Deadwood(numPlayers);
             System.out.println("Start Game with " + numPlayers + " players.");
             System.out.println("Active Player: " + game.getCurrent_Player().getName());
