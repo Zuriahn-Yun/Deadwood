@@ -8,6 +8,7 @@ public class Deadwood{
 
     public Deadwood(int numPlayers) {
         initializeBoard();
+        initializePlayers(numPlayers);
         //set number of players
     }
 
@@ -17,6 +18,12 @@ public class Deadwood{
         board.put("Jail", new Set("Jail", Arrays.asList("Train Station", "Main Street")));
         board.put("Main Street", new Set("Main Street", Arrays.asList("Train Station", "Jail", "Trailer")));
     }
+    private void initializePlayers(int num) {
+            for (int i = 0; i < num; i++) {
+                players.add(new Player("Player " + (i + 1)));
+            }
+            current_Player = players.get(0);
+        }
 
     // Getters
     public Map<String, Set> getBoard() {
@@ -94,7 +101,9 @@ public class Deadwood{
         private int dollars;
         private int credits;
         private Role role;
+        private String location = "Trailer";
             
+        public Player(String name) { this.name = name; }
         // Getters for Player Class
         public int getCredits() {
             return credits;
@@ -111,6 +120,8 @@ public class Deadwood{
         public Role getRole() {
             return role;
         }
+        public String getLocation() { 
+            return location; }
         // Setters for Player Class
         public void setCredits(int credits) {
             this.credits = credits;
@@ -126,6 +137,39 @@ public class Deadwood{
         }
         public void setRole(Role role) {
             this.role = role;
+        }
+        public void setLocation(String location) { 
+            this.location = location; }
+        
+        public void move(String destination) {}
+        public void act() {}
+        public void rehearse() {}
+    }
+
+    public class Set {
+        private String name;
+        private List<String> neighbors;
+        public Set(String name, List<String> neighbors) {
+            this.name = name;
+            this.neighbors = neighbors;
+        }
+        
+        public boolean isAdjacent(String destination) {
+            return neighbors.contains(destination);
+        }   
+        // getters
+        public String getName() {
+            return name;
+        } 
+        public List<String> getNeighbors() {
+            return neighbors;
+        }
+        // setters
+        public void setName(String name) {
+            this.name = name;
+        }
+        public void setNeighbors(List<String> neighbors) {
+            this.neighbors = neighbors;
         }
     }
     // TODO Role Methods and Logic
