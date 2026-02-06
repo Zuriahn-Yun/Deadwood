@@ -4,13 +4,24 @@ import java.util.*;
 public class Deadwood{
     private ArrayList<Player> players = new ArrayList<>();
     private Player current_Player;
-    // Array list of Array List to hold the board and positions for now
-    private ArrayList<ArrayList<String>> board;
+    private Map<String, Set> board = new HashMap<>(); //Using map for adjacent moves
+
+    public Deadwood(int numPlayers) {
+        initializeBoard();
+        //set number of players
+    }
+
+    private void initializeBoard() {
+        //players only move to adjacent rooms 
+        board.put("Train Station", new Set("Train Station", Arrays.asList("Jail", "Main Street", "Casting Office")));
+        board.put("Jail", new Set("Jail", Arrays.asList("Train Station", "Main Street")));
+        board.put("Main Street", new Set("Main Street", Arrays.asList("Train Station", "Jail", "Trailer")));
+    }
 
     // Getters
-    public ArrayList<ArrayList<String>> getBoard() {
-        return board;
-    }
+    public Map<String, Set> getBoard() {
+        return board; }
+
     public Player getCurrent_Player() {
         return current_Player;
     }
@@ -18,7 +29,7 @@ public class Deadwood{
         return players;
     }
     // Setters
-    public void setBoard(ArrayList<ArrayList<String>> board) {
+    public void setBoard(Map<String, Set> board) {
         this.board = board;
     }
     public void setCurrent_Player(Player current_Player) {
@@ -38,7 +49,7 @@ public class Deadwood{
     * 
     */
     public class CastingOffice{
-        // Key: Upgrade leve, Value: Cost in Dollars
+        // Key: Upgrade level, Value: Cost in Dollars
         private Map<Integer,Integer> dollarUpgradeMap = Map.of(
             2,4,
             3,10,
@@ -174,6 +185,7 @@ public class Deadwood{
             return random.nextInt(6) + 1;
         }
     }
+    
     public static void main(String[] args) {
         // Test
         System.out.println("Start Game");
