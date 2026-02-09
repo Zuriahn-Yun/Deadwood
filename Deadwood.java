@@ -12,6 +12,23 @@ public class Deadwood {
     private Player current_Player;
     private Map<String, Set> board = new HashMap<>(); // Using map for adjacent moves
 
+    public void initializePlayers(Scanner scanner){
+        System.out.println("Testing Game Start");
+        Integer numPlayers = null;
+        while (numPlayers == null || numPlayers < 2 || numPlayers > 8) {
+            System.out.println("Please Enter Number of Players");
+            if (scanner.hasNextInt()) {
+                numPlayers = scanner.nextInt();
+                // Read Next Line
+                scanner.nextLine();
+            } else {
+                String invalidInput = scanner.nextLine();
+                System.err.println("That is not a valid number of Players");
+            }
+        }
+        System.out.println("Starting Game With: " + numPlayers + " Players");
+    }
+
     public Deadwood(int numPlayers) {
         initializeBoard();
         initializePlayers(numPlayers);
@@ -174,7 +191,10 @@ public class Deadwood {
         public void rehearse() {
         }
     }
-
+    /**
+     * The Set Class manages the set cards that will be pulled from cards.xml.
+     * 
+     */
     public class Set {
         private String name;
         private List<String> neighbors;
@@ -206,7 +226,10 @@ public class Deadwood {
             this.neighbors = neighbors;
         }
     }
-
+    /**
+     * The Role class manages 
+     * 
+     */
     public class Role {
         private String name;
         private int rank;
@@ -238,7 +261,10 @@ public class Deadwood {
             return occupied;
         }
     }
-
+    /**
+     * Scene class is meant to manage 
+     * 
+     */
     public class Scenes {
         private ArrayList<String> roles = new ArrayList<>();
         private int budget;
