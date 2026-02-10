@@ -1,6 +1,7 @@
 import java.util.*;
+
 /**
- * Scene class is meant to manage
+ * TODO read xml, process player actions
  * 
  */
 public class Scenes {

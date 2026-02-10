@@ -1,7 +1,7 @@
 // import java.util.*;
 
 /**
- * The Role class manages
+ * TODO
  * 
  */
 public class Role {
