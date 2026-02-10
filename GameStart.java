@@ -10,6 +10,6 @@ public class GameStart {
         System.out.println("Game Starting");
         Scanner scanner = new Scanner(System.in);
         GameManager gameManager = new GameManager();
-        gameManager.initializePlayers(scanner);
+        gameManager.initializeNumberOfPlayers(scanner);
     }
 }

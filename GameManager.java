@@ -2,15 +2,17 @@ import java.util.*;
 
 /*
 * TODO COMMENTS
-*
+* TODO TRANSACTION MANAGER LOCATION MANAGER, WHILE THIS MANAGES PLAYERS AND WHOS TURN
 *
 */
 public class GameManager {
     private Player current_Player;
-    private int players;
+    private int NumberOfPlayers;
+    // Hold our Player Objects
+    List<Player> players = new ArrayList<>();
 
     // Initialize the number of players for the game
-    public void initializePlayers(Scanner scanner) {
+    public void initializeNumberOfPlayers(Scanner scanner) {
         System.out.println("Testing Game Start");
         Integer numPlayers = null;
         while (numPlayers == null || numPlayers < 2 || numPlayers > 8) {
@@ -31,13 +33,26 @@ public class GameManager {
         System.out.println("Starting Game With: " + numPlayers + " Players");
     }
 
+    // Initialize Player Objects with names and Ids;
+    public void initializePlayers(Scanner scanner) {
+        for (int i = 0; i < getNumberOfPlayers(); i++) {
+            // Create a player Object
+            Player player = new Player();
+            // TODO player.getname()
+            // Set PlayerId
+            player.setPlayerID(i);
+            // Add to Player List
+            players.add(player);
+        }
+    }
+
     // Getters
     public Player getCurrent_Player() {
         return current_Player;
     }
 
-    public int getPlayers() {
-        return players;
+    public int getNumberOfPlayers() {
+        return NumberOfPlayers;
     }
 
     // Setters
@@ -46,6 +61,6 @@ public class GameManager {
     }
 
     public void setNumberofPlayers(Integer Players) {
-        this.players = Players;
+        this.NumberOfPlayers = Players;
     }
 }

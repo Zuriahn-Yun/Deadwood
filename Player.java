@@ -1,3 +1,4 @@
+import java.util.*;
 /*
 *
 *
@@ -12,6 +13,13 @@ public class Player {
     private int credits;
     private Role role;
     private String location = "Trailer";
+
+    // Get and Set Player Name from user input
+    public void inputPlayerName(Scanner scanner,int playerID){
+        System.out.println("Input Player: " + playerID + "Name");
+        name = scanner.nextLine();
+        setName(name);
+    }
 
     // Getters for Player Class
     public int getCredits() {
