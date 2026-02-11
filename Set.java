@@ -7,6 +7,11 @@ import java.util.*;
 public class Set {
     private String name;
     private List<String> neighbors;
+    HashMap area = new HashMap<>();
+    HashMap takes = new HashMap<>();
+    // Parts
+    // name(str),level(int),area(x,y,h,w),line(str)
+    
 
     public Set(String name, List<String> neighbors) {
         this.name = name;
