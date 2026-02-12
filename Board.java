@@ -4,11 +4,12 @@ import javax.xml.parsers.*;
 import org.w3c.dom.*;
 
 /*
-* TODO READ AND PROCESS XML Path: xml\board.xml
+* TODO READ AREA,TAKES,PART,AND LINES, add storage locations in set class
 */
 public class Board {
     // Read XML
-    public Board() throws Exception {
+    public Board() throws Exception {;
+        ArrayList<Set> sets = new ArrayList<>();
         // FilePath: xml\board.xml
         File xmlFile = new File("xml/board.xml");
         // Create a DocumentBuilder
@@ -42,17 +43,19 @@ public class Board {
                 Element nodeElement = (Element) setNode;
                 // Get Name of Set
                 System.out.println("Set Name: " + nodeElement.getAttribute("name"));
-                // Extract Neighbors
-
-                List<String> arrayList = getNeighbors(nodeElement);
-                System.out.println(arrayList);
-
+                // Extract Neighbors and add to Set
+                List<String> neighborList= getNeighbors(nodeElement);
+                // Create a Set Object with name and neighbors
+                Set set = new Set(nodeElement.getAttribute("name"), neighborList);
+                // Add set to Set list
+                sets.add(set);
             }
         }
 
     }
 
-    // Parse the neighbors out of any Element and return an ArrayList on all neighbors
+    // Parse the neighbors out of any Element and return an ArrayList on all
+    // neighbors
     public List<String> getNeighbors(Element nodeElement) {
         List<String> neighborsList = new ArrayList<>();
         try {
