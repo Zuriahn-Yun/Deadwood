@@ -21,6 +21,12 @@ public class Player {
         setName(name);
     }
 
+    // Player Actions 
+    public void act() {
+    }
+
+    public void rehearse() {
+    }
     // Getters for Player Class
     public int getCredits() {
         return credits;
@@ -86,9 +92,5 @@ public class Player {
     public void move(String destination) {
     }
 
-    public void act() {
-    }
-
-    public void rehearse() {
-    }
+    
 }

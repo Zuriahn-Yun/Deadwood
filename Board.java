@@ -17,29 +17,28 @@ public class Board {
 
         // Parse the XML file
         Document document = builder.parse(xmlFile);
-        // Root Node: board
-        // Node root = document.getDocumentElement();
+        // // Grab all Sets
+        // NodeList setList = document.getElementsByTagName("set");
+        // There are 10 Sets
+        NodeList sets = document.getElementsByTagName("set");
+        for (int i = 0; i < sets.getLength(); i++) {
+            Node setNode = sets.item(i);
+            if (setNode.getNodeType() == Node.ELEMENT_NODE) {
+                // This is a single set element
+                Element setElement = (Element) setNode;
+                NodeList elementChildren = setElement.getChildNodes();
+                for (int j = 0; i < elementChildren.getLength(); j++) {
+                    Node setelementchildNode = elementChildren.item(j);
+                    if (setelementchildNode.getNodeType() == Node.ELEMENT_NODE) {
+                        Element setchild = (Element) setelementchildNode;
+                        // this looks at neightbors, area, takes parts, should write a function to parse each individually instead of all here togehter
+                        System.out.println(setchild.getTagName());
+                    }
+                }
 
-        // Grab all Sets
-        NodeList setList = document.getElementsByTagName("set");
-        
-        // Iterate through Sets
-        for(int i = 0; i < setList.getLength();i++){
-            // Grab node
-            Node curr = setList.item(i);
-            // Cast node to element
-            Element element = (Element) curr;
-            // Grab name of Set
-            // Set set = new Set(element.getAttribute("name"), null)
-            System.out.println(element.getAttribute("name"));
-            Node neighbors = element.getElementsByTagName("neighbors").item(0);
-            NodeList curre = neighbors.getChildNodes();
-            System.out.println(neighbors);
-            System.out.println(curre);
-            
+            }
         }
-
-    }   
+    }
 
     public static void main(String[] args) {
         System.out.println("TESTING BOARD PARSING XML");
