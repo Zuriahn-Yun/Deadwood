@@ -17,27 +17,61 @@ public class Board {
 
         // Parse the XML file
         Document document = builder.parse(xmlFile);
+        document.getDocumentElement().normalize();
         // // Grab all Sets
         // NodeList setList = document.getElementsByTagName("set");
         // There are 10 Sets
-        NodeList sets = document.getElementsByTagName("set");
-        for (int i = 0; i < sets.getLength(); i++) {
-            Node setNode = sets.item(i);
+        NodeList setsNodeList = document.getElementsByTagName("set");
+        // 12 Neighbor Lists
+        NodeList neighborsNodeList = document.getElementsByTagName("neighbors");
+        // area
+        NodeList areaNodeList = document.getElementsByTagName("area");
+        System.out.println("Area" + areaNodeList.getLength());
+        // upgrades
+        NodeList upgradesNodeList = document.getElementsByTagName("upgrades");
+        System.out.println("upgradesNodeList" + upgradesNodeList.getLength());
+        // Trailer
+        Node trailerNode = document.getElementsByTagName("trailer").item(0);
+        // Office
+        Node officeNode = document.getElementsByTagName("office").item(0);
+
+        for (int i = 0; i < setsNodeList.getLength(); i++) {
+            Node setNode = setsNodeList.item(i);
+
             if (setNode.getNodeType() == Node.ELEMENT_NODE) {
-                // This is a single set element
-                Element setElement = (Element) setNode;
-                NodeList elementChildren = setElement.getChildNodes();
-                for (int j = 0; i < elementChildren.getLength(); j++) {
-                    Node setelementchildNode = elementChildren.item(j);
-                    if (setelementchildNode.getNodeType() == Node.ELEMENT_NODE) {
-                        Element setchild = (Element) setelementchildNode;
-                        // this looks at neightbors, area, takes parts, should write a function to parse each individually instead of all here togehter
-                        System.out.println(setchild.getTagName());
-                    }
-                }
+                Element nodeElement = (Element) setNode;
+                // Get Name of Set
+                System.out.println("Set Name: " + nodeElement.getAttribute("name"));
+                // Extract Neighbors
+
+                List<String> arrayList = getNeighbors(nodeElement);
+                System.out.println(arrayList);
 
             }
         }
+
+    }
+
+    // Parse the neighbors out of any Element and return an ArrayList on all neighbors
+    public List<String> getNeighbors(Element nodeElement) {
+        List<String> neighborsList = new ArrayList<>();
+        try {
+            // Extract neighbors
+            Node neighbors = nodeElement.getElementsByTagName("neighbors").item(0);
+            Element neighborElement = (Element) neighbors;
+
+            NodeList neighborsNodeList = neighborElement.getElementsByTagName("neighbor");
+            // 3
+            System.out.println(neighborsNodeList.getLength());
+            for (int i = 0; i < neighborsNodeList.getLength(); i++) {
+                Node neighbor = neighborsNodeList.item(i);
+                Element neighborELement = (Element) neighbor;
+                neighborsList.add(neighborELement.getAttribute("name"));
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return neighborsList;
     }
 
     public static void main(String[] args) {
