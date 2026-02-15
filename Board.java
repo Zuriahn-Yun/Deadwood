@@ -4,12 +4,17 @@ import javax.xml.parsers.*;
 import org.w3c.dom.*;
 
 /*
-* TODO READ AREA,TAKES,PART,AND LINES, add storage locations in set class
+*  Class to hold all information from board.xml
 */
 public class Board {
     // Read XML
+    // All general sets are in this ArrayList
+    private ArrayList<Set> sets = new ArrayList<>();
+    // Trailer and office are directly accesible variables
+    private Set trailer;
+    private Office office;
+
     public Board() throws Exception {
-        ArrayList<Set> sets = new ArrayList<>();
         // FilePath: xml\board.xml
         File xmlFile = new File("xml/board.xml");
         // Create a DocumentBuilder
@@ -23,38 +28,34 @@ public class Board {
         // NodeList setList = document.getElementsByTagName("set");
         // There are 10 Sets
         NodeList setsNodeList = document.getElementsByTagName("set");
-        // 12 Neighbor Lists
-        NodeList neighborsNodeList = document.getElementsByTagName("neighbors");
-        // area
-        NodeList areaNodeList = document.getElementsByTagName("area");
-        System.out.println("Area" + areaNodeList.getLength());
-        // upgrades
-        NodeList upgradesNodeList = document.getElementsByTagName("upgrades");
 
         // Trailer
         Node trailerNode = document.getElementsByTagName("trailer").item(0);
+        Element trailElement = (Element) trailerNode;
+        Set trailer = new Set("trailer", getNeighbors(trailElement));
+        trailer.setArea(getArea(trailElement));
+        setTrailer(trailer);
+
         // Office
         Node officeNode = document.getElementsByTagName("office").item(0);
+        Element officeElement = (Element) officeNode;
+        Set officeSet = new Set("office", getNeighbors(officeElement));
+        officeSet.setArea(getArea(officeElement));
+        // Setting Office
+        setOffice(new Office(officeSet, getUpgrades(officeElement)));
 
         for (int i = 0; i < setsNodeList.getLength(); i++) {
             Node setNode = setsNodeList.item(i);
 
             if (setNode.getNodeType() == Node.ELEMENT_NODE) {
                 Element nodeElement = (Element) setNode;
-                // Get Name of Set
-                System.out.println("Set Name: " + nodeElement.getAttribute("name"));
 
-                // Extract Neighbors and add to Set
-                List<String> neighborList = getNeighbors(nodeElement);
-                HashMap<String, HashMap<String, String>> takes = getTakes(nodeElement);
-                HashMap<String, String> area = getArea(nodeElement);
-                
-                
                 // Create a Set Object with name and neighbors
-                Set set = new Set(nodeElement.getAttribute("name"), neighborList);
-                set.setArea(area);
-                set.setTakes(takes);
-                
+                Set set = new Set(nodeElement.getAttribute("name"), getNeighbors(nodeElement));
+                set.setArea(getArea(nodeElement));
+                set.setTakes(getTakes(nodeElement));
+                set.setParts(getParts(nodeElement));
+
                 // Add set to Set list
                 sets.add(set);
             }
@@ -62,11 +63,72 @@ public class Board {
 
     }
 
-    // Parse Parts
-    public List<String> getParts(Element nodElement) {
-        ArrayList<String> parts = new ArrayList<>();
+    public void setOffice(Office office) {
+        this.office = office;
+    }
+
+    public void setSets(ArrayList<Set> sets) {
+        this.sets = sets;
+    }
+
+    public void setTrailer(Set trailer) {
+        this.trailer = trailer;
+    }
+
+    public Office getOffice() {
+        return office;
+    }
+
+    public Set getTrailer() {
+        return trailer;
+    }
+
+    // Parse Upgrades
+    public ArrayList<Upgrade> getUpgrades(Element nodeElement) {
+        ArrayList<Upgrade> upgrades = new ArrayList<>();
         try {
-            // Parse Parts 
+            Node upgradeNode = nodeElement.getElementsByTagName("upgrades").item(0);
+            Element upgradeElement = (Element) upgradeNode;
+            NodeList upgradeList = upgradeElement.getElementsByTagName("upgrade");
+            for (int i = 0; i < upgradeList.getLength(); i++) {
+                Node up = upgradeList.item(i);
+                Element upgradeSingleElement = (Element) up;
+                Upgrade upgrade = new Upgrade();
+                upgrade.setLevel(Integer.parseInt(upgradeSingleElement.getAttribute("level")));
+                upgrade.setAmt(upgradeSingleElement.getAttribute("amt"));
+                upgrade.setArea(getArea(upgradeSingleElement));
+                upgrade.setCurrency(upgradeSingleElement.getAttribute("currency"));
+                upgrades.add(upgrade);
+            }
+
+        } catch (Exception e) {
+            System.out.println("Exception" + e);
+        }
+        return upgrades;
+    }
+
+    // Parse Parts
+    public ArrayList<Part> getParts(Element nodeElement) {
+        ArrayList<Part> parts = new ArrayList<>();
+        try {
+            // Parse Parts
+            Node partsNode = nodeElement.getElementsByTagName("parts").item(0);
+            Element partsElement = (Element) partsNode;
+            NodeList partsNodeList = partsElement.getElementsByTagName("part");
+            for (int i = 0; i < partsNodeList.getLength(); i++) {
+                Node part = partsNodeList.item(i);
+                Element partElement = (Element) part;
+
+                // Create a parts Object
+                Part partObj = new Part();
+                // Parse Parts and add to partObj
+                partObj.setName(partElement.getAttribute("name"));
+                partObj.setLevel(Integer.parseInt(partElement.getAttribute("level")));
+                partObj.setArea(getArea(partsElement));
+                partObj.setLine(partElement.getAttribute("line"));
+                parts.add(partObj);
+            }
+
         } catch (Exception e) {
             System.out.println("Exception: " + e);
         }
@@ -84,10 +146,10 @@ public class Board {
                 Node take = takesNodeList.item(i);
                 Element takeElement = (Element) take;
                 String number = takeElement.getAttribute("number");
-                HashMap<String,String> area = getArea(takeElement);
+                HashMap<String, String> area = getArea(takeElement);
                 takes.put(number, area);
             }
-            
+
         } catch (Exception e) {
             System.out.println("Exception" + e);
         }
@@ -130,14 +192,19 @@ public class Board {
             System.out.println(e);
         }
         return neighborsList;
+
+    }
+
+    public ArrayList<Set> getSets() {
+        return sets;
     }
 
     public static void main(String[] args) {
-        System.out.println("TESTING BOARD PARSING XML");
         try {
             Board board = new Board();
+            
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("Exception" + e);
         }
 
     }
