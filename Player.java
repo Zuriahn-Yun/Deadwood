@@ -6,13 +6,15 @@ import java.util.*;
 */
 public class Player {
     private String name;
-    // Id is the Players Number (Ex: 1 = Player 1)
+    // Id is the Players Number (Ex: 1 = Player 1), gets initialized during game start
     private int playerID;
-    private int rank;
-    private int dollars;
-    private int credits;
-    private Role role;
+    private int rank = 1;
+    private int dollars = 0;
+    private int credits =0;
+    private Role role ;
     private String location = "Trailer";
+    private int Score = 0;
+    private boolean working = false;
 
     // Get and Set Player Name from user input
     public void inputPlayerName(Scanner scanner,int playerID){
@@ -20,16 +22,33 @@ public class Player {
         name = scanner.nextLine();
         setName(name);
     }
-
+    // TODO If the player wants to move, what do we want to happen
+    public void Move(){
+        // If the Playyer is not working they can Move
+        if(getWorking() == false){
+            
+        }else{
+            System.out.println("Player Cannot work if you are currently working.");
+        }
+    }
     // Player Actions 
     public void act() {
     }
 
     public void rehearse() {
     }
+
+    // Calculate Player Score
+    public void calculateScore(){
+        this.Score = getCredits() + getCredits() + (5 * getRank());
+    }
     // Getters for Player Class
     public int getCredits() {
         return credits;
+    }
+
+    public boolean getWorking(){
+        return working;
     }
 
     public String getName() {

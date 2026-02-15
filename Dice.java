@@ -2,7 +2,7 @@ import java.util.*;
 
 /*
 * Dice Class. For use by Player Object when Dice need to be rolled.
-* TODO: MOVE THIS TO ALTERNATE CLASS REDUNDANT?
+* TODO: MOVE THIS TO ALTERNATE CLASS, Alone REDUNDANT?
 */
 public class Dice {
     // Create a Random Instance

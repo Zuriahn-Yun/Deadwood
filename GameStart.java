@@ -11,5 +11,8 @@ public class GameStart {
         Scanner scanner = new Scanner(System.in);
         GameManager gameManager = new GameManager();
         gameManager.initializeNumberOfPlayers(scanner);
+        // Initialize castingOffice 
+        CastingOffice castingOffice = new CastingOffice();
+
     }
 }
