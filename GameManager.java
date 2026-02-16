@@ -99,7 +99,20 @@ public class GameManager {
         Collections.shuffle(list);
         return list;
     }
-    
+    public static void PlayerTurn(Player player, Scanner scanner){
+        // if the player is working a role 
+        if(player.getWorkingRole()){
+            // the player must act or rehears because you cannot walk off a role once you are on it
+            System.out.println("Press 1 to act, Press 2 to Rehearse");
+
+
+        }else{
+            System.out.println("Press 1 to move, 2 to take a role. 3 to do nothing.");
+            // if they move they can then take a roel
+            // after moving they can take a role 
+
+        }
+    }
     
     // Getters
     public List<Player> getPlayers() {

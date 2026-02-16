@@ -8,7 +8,6 @@ import java.util.*;
 public class Player {
     private String name;
     // Id is the Players Number (Ex: 1 = Player 1), gets initialized during game
-    // start
     private int playerID;
     private int rank = 1;
     private int dollars = 0;
@@ -16,26 +15,25 @@ public class Player {
     private Role role;
     private Set location;
     private int Score = 0;
-    private boolean working = false;
+    private boolean workingRole = false;
 
     public Player(Set trailer){
         this.location = trailer;
+    }
+    
+    public void Identify(){
+        System.out.println("Player Id: " + getPlayerID());
+        System.out.println("Player Name: " + getName());
+        System.out.println("Rank: " + getRank());
+        System.out.println("Dollars: " + getDollars());
+        System.out.println("Credits: " +getCredits());
+        System.out.println("Score: " + getScore());
     }
     // Get and Set Player Name from user input
     public void inputPlayerName(Scanner scanner, int playerID) {
         System.out.println("Input Player: " + playerID + "Name");
         name = scanner.nextLine();
         setName(name);
-    }
-
-    // TODO If the player wants to move, what do we want to happen
-    public void Move() {
-        // If the Playyer is not working they can Move
-        if (getWorking() == false) {
-
-        } else {
-            System.out.println("Player Cannot work if you are currently working.");
-        }
     }
 
     // Player Actions
@@ -52,6 +50,7 @@ public class Player {
 
     // getters
     public int getScore() {
+        calculateScore();
         return Score;
     }
 
@@ -59,8 +58,8 @@ public class Player {
         return credits;
     }
 
-    public boolean getWorking() {
-        return working;
+    public boolean getWorkingRole() {
+        return workingRole;
     }
 
     public String getName() {
