@@ -16,8 +16,13 @@ public class GameStart {
             GameManager gameManager = new GameManager();
             gameManager.initializeNumberOfPlayers(scanner);
             gameManager.initializePlayers(scanner, board.getTrailer());
-            // Initialize Casting Office
-            CastingOffice castingOffice = new CastingOffice();
+            
+            for(int i = 0; i < gameManager.getTotalDays();i++){
+                System.out.println("Start Day: " + i + 1);
+                for(Player player: gameManager.getPlayers()){
+                    System.out.println("Player " + player.getPlayerID() + ": " + player.getName() + "'s Turn");
+                }
+            }
 
         } catch (Exception e) {
             System.out.println("Error: " + e);

@@ -99,9 +99,15 @@ public class GameManager {
         Collections.shuffle(list);
         return list;
     }
-
+    
     
     // Getters
+    public List<Player> getPlayers() {
+        return players;
+    }
+    public int getTotalDays() {
+        return TotalDays;
+    }
     public Player getCurrent_Player() {
         return current_Player;
     }
