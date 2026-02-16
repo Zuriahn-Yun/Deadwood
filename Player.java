@@ -1,4 +1,5 @@
 import java.util.*;
+
 /*
 *
 *
@@ -6,32 +7,38 @@ import java.util.*;
 */
 public class Player {
     private String name;
-    // Id is the Players Number (Ex: 1 = Player 1), gets initialized during game start
+    // Id is the Players Number (Ex: 1 = Player 1), gets initialized during game
+    // start
     private int playerID;
     private int rank = 1;
     private int dollars = 0;
-    private int credits =0;
-    private Role role ;
-    private String location = "Trailer";
+    private int credits = 0;
+    private Role role;
+    private Set location;
     private int Score = 0;
     private boolean working = false;
 
+    public Player(Set trailer){
+        this.location = trailer;
+    }
     // Get and Set Player Name from user input
-    public void inputPlayerName(Scanner scanner,int playerID){
+    public void inputPlayerName(Scanner scanner, int playerID) {
         System.out.println("Input Player: " + playerID + "Name");
         name = scanner.nextLine();
         setName(name);
     }
+
     // TODO If the player wants to move, what do we want to happen
-    public void Move(){
+    public void Move() {
         // If the Playyer is not working they can Move
-        if(getWorking() == false){
-            
-        }else{
+        if (getWorking() == false) {
+
+        } else {
             System.out.println("Player Cannot work if you are currently working.");
         }
     }
-    // Player Actions 
+
+    // Player Actions
     public void act() {
     }
 
@@ -39,15 +46,20 @@ public class Player {
     }
 
     // Calculate Player Score
-    public void calculateScore(){
+    public void calculateScore() {
         this.Score = getCredits() + getCredits() + (5 * getRank());
     }
-    // Getters for Player Class
+
+    // getters
+    public int getScore() {
+        return Score;
+    }
+
     public int getCredits() {
         return credits;
     }
 
-    public boolean getWorking(){
+    public boolean getWorking() {
         return working;
     }
 
@@ -67,7 +79,7 @@ public class Player {
         return role;
     }
 
-    public String getLocation() {
+    public Set getLocation() {
         return location;
     }
 
@@ -104,12 +116,8 @@ public class Player {
         this.role = role;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void Move(Set set) {
+        this.location = set;
     }
 
-    public void move(String destination) {
-    }
-
-    
 }

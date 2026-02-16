@@ -1,4 +1,6 @@
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /*
 * TODO TRANSACTION MANAGER LOCATION MANAGER, WHILE THIS MANAGES PLAYERS AND WHOS TURN
@@ -26,7 +28,7 @@ public class GameManager {
                     System.err.println("That is not a valid number of Players (2-8 Players)");
                 }
             } else {
-                String invalidInput = scanner.nextLine();
+                scanner.nextLine();
                 System.err.println("That is not a valid number of Players");
             }
         }
@@ -63,19 +65,42 @@ public class GameManager {
     }
 
     // Initialize Player Objects with names and Ids;
-    public void initializePlayers(Scanner scanner) {
+    public void initializePlayers(Scanner scanner,Set trailer) {
         for (int i = 0; i < getNumberOfPlayers(); i++) {
             // Create a player Object
-            Player player = new Player();
-            // TODO player.getname()
-            // Set PlayerId
-            player.setPlayerID(i);
+            Player player = new Player(trailer);
+            System.out.println("Get Player Name: ");
+            String name = scanner.nextLine();
+            player.setName(name);
             // Add to Player List
             players.add(player);
         }
+        // Randomly Initialize Player Order
+        System.out.println("Randomly Initializing Player Order");
+        ArrayList<Player> orderedPlayers = new ArrayList<>();
+        List<Integer> shuffledList = generateShuffledList(getNumberOfPlayers());
+        for (int index : shuffledList){
+            orderedPlayers.add(players.get(index - 1));
+        }
+        this.players = orderedPlayers;
+        int i = 1;
+        for(Player player: players){
+            player.setPlayerID(i);
+            System.out.println("Player " + i + ": " + player.getname());
+            i +=1;
+        }
+        
     }
-    
+    // Randomly Generate a list of numbers from 1 to n for player shuffling
+    public static List<Integer> generateShuffledList(int n) {
+        List<Integer> list = IntStream.rangeClosed(1, n)
+                                      .boxed()
+                                      .collect(Collectors.toList());
+        Collections.shuffle(list);
+        return list;
+    }
 
+    
     // Getters
     public Player getCurrent_Player() {
         return current_Player;

@@ -199,13 +199,4 @@ public class Board {
         return sets;
     }
 
-    public static void main(String[] args) {
-        try {
-            Board board = new Board();
-            
-        } catch (Exception e) {
-            System.out.println("Exception" + e);
-        }
-
-    }
 }

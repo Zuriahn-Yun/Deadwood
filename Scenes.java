@@ -24,14 +24,27 @@ public class Scenes {
     }
 
     // Getters
-    public String getSceneName() { return sceneName; }
-    public int getBudget() { return budget; }
-    public List<Role> getRoles() { return roles; }
-    public boolean isFlipped() { return isFlipped; }
+    public String getSceneName() {
+        return sceneName;
+    }
+
+    public int getBudget() {
+        return budget;
+    }
+
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    public boolean isFlipped() {
+        return isFlipped;
+    }
 
     // Setters
-    public void setFlipped(boolean flipped) { this.isFlipped = flipped; }
-    
+    public void setFlipped(boolean flipped) {
+        this.isFlipped = flipped;
+    }
+
     public Role getRoleByName(String name) {
         for (Role r : roles) {
             if (r.getName().equalsIgnoreCase(name)) {

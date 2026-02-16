@@ -1,7 +1,6 @@
 // import java.util.*;
 
 /**
- * TODO
  * 
  */
 public class Role {
