@@ -1,8 +1,8 @@
 import java.util.*;
 
 /**
- * TODO Parse cards.xml
- * MANAGES CARDS, BUDGET, AND ROLES AVAILABLE
+ * 
+ * Manages Cards Budget and Scenes
  */
 public class Scenes {
     private String sceneName;

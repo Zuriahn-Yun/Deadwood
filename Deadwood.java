@@ -12,6 +12,7 @@ public class Deadwood {
             while (true) {
                 // Initialize Board
                 Board board = new Board();
+                Deck deck = new Deck();
                 GameManager gameManager = new GameManager();
                 // Initialize Player Count
                 gameManager.initializeNumberOfPlayers();
@@ -25,7 +26,7 @@ public class Deadwood {
                     System.out.println("Start Day: " + i );
                     for (Player player : gameManager.getPlayers()) {
                         System.out.println("Player " + player.getPlayerID() + ": " + player.getName() + "'s Turn");
-                        System.out.println("HERE? ");
+                        
                         // Setting Active Player
                         locationManager.setActivePlayer(player.getPlayerID());
                         player.playerTurn();

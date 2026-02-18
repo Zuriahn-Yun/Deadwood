@@ -1,14 +1,13 @@
 import java.util.HashMap;
 
 /*
- * To hold parts and upgrades from board.xml
+ * To hold parts and upgrades from cards.xml
  */
 public class Part {
     private String name;
     private int level;
     private HashMap<String, String> area;
     private String line;
-    // only used if it if a
 
     // setters
     public void setArea(HashMap<String, String> area) {
