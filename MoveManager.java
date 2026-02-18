@@ -6,8 +6,9 @@ import java.util.*;
 public class MoveManager {
     private ArrayList<Set> sets = new ArrayList<>();
 
-    public void move(Player player, Scanner scanner) {
+    public void move(Player player,UserInput userInput) {
         System.out.println("Current Location: " + player.getLocation().getName());
+        String currentlocation = player.getLocation().getName();
         // Iterate through possible locations
         List<String> neighbors = player.getLocation().getNeighbors();
         HashMap<Integer, String> map = new HashMap<>();
@@ -16,30 +17,28 @@ public class MoveManager {
             map.put(i + 1, neighbors.get(i));
         }
         // Valid user input will be from 1 to neighbors.size
-        String userInput = "";
+        String userchoice = "";
         System.out.println("Pick a neighboring destination using numbers 1 through " + neighbors.size() + ".");
-        userInput = scanner.nextLine();
-        while (Integer.parseInt(userInput) < 1 || Integer.parseInt(userInput) > neighbors.size()) {
+        userchoice = userInput.getInput();
+        while (Integer.parseInt(userchoice) < 1 || Integer.parseInt(userchoice) > neighbors.size()) {
             System.out.println("That was not valid input.");
             System.out.println("Pick a neighboring destination using numbers 1 through " + neighbors.size() + ".");
-            userInput = scanner.nextLine();
+            userchoice = userInput.getInput();
         }
         // if we have valid user input
-        String destinationName = map.get(Integer.parseInt(userInput));
-
+        String destinationName = map.get(Integer.parseInt(userchoice));
+        Set Destination = getDestination(destinationName).orElse(null);
+        System.out.println("Moving Player from " + currentlocation + " to " + Destination.getName() + ".");
+        player.setLocation(Destination);
     }
 
-    public Set getDestination(String destinationName) throws Exception null {
-        try {
-            for (Set set : sets) {
-                if (set.getName() == destinationName) {
-                    return set;
+    // Get the Destination
+    public Optional<Set> getDestination(String destinationName) {
+            for (Set currSet : sets) {
+                if (currSet.getName() == destinationName) {
+                    return Optional.ofNullable(currSet);
                 }
             }
-            return null;
-        } catch (Exception e) {
-            System.out.println("Exception " + e);
-        }
-
+            return Optional.empty();
     }
 }

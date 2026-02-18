@@ -3,38 +3,40 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /*
-* TODO TRANSACTION MANAGER LOCATION MANAGER, WHILE THIS MANAGES PLAYERS AND WHOS TURN
+*
 *
 */
 public class GameManager {
     private Player current_Player;
     private int NumberOfPlayers;
-    // Hold our Player Objects
     List<Player> players = new ArrayList<>();
     private int currDay = 1;
     private int TotalDays = 4;
+    UserInput userInput = new UserInput();
 
     // Initialize the number of players for the game
-    public void initializeNumberOfPlayers(Scanner scanner) {
-        System.out.println("Testing Game Start");
+    public void initializeNumberOfPlayers() {
         Integer numPlayers = null;
-        while (numPlayers == null || numPlayers < 2 || numPlayers > 8) {
-            System.out.println("Please Enter Number of Players");
-            if (scanner.hasNextInt()) {
-                numPlayers = scanner.nextInt();
-                // Read Next Line
-                scanner.nextLine();
-                if (numPlayers < 2 || numPlayers > 8) {
-                    System.err.println("That is not a valid number of Players (2-8 Players)");
-                }
-            } else {
-                scanner.nextLine();
-                System.err.println("That is not a valid number of Players");
-            }
-        }
+        numPlayers = readPlayers();
         setNumberofPlayers(numPlayers);
         setupDiffGroupSizes();
         System.out.println("Starting Game With: " + numPlayers + " Players");
+    }
+
+    public Integer readPlayers() {
+        while (true) {
+            System.out.println("Please Enter Number of Players");
+            String input = userInput.getInput();
+            try {
+                int num = Integer.parseInt(input);
+                if (num >= 2 && num <= 8) {
+                    return num;
+                }
+                System.err.println("Invalid range! Please enter 2-8 players.");
+            } catch (NumberFormatException e) {
+                System.err.println("That's not a number. Try again!");
+            }
+        }
     }
 
     // Setup Different Group Sizes
@@ -65,12 +67,12 @@ public class GameManager {
     }
 
     // Initialize Player Objects with names and Ids;
-    public void initializePlayers(Scanner scanner,Set trailer) {
+    public void initializePlayers(Set trailer) {
         for (int i = 0; i < getNumberOfPlayers(); i++) {
             // Create a player Object
             Player player = new Player(trailer);
             System.out.println("Get Player Name: ");
-            String name = scanner.nextLine();
+            String name = userInput.getInput();
             player.setName(name);
             // Add to Player List
             players.add(player);
@@ -79,48 +81,52 @@ public class GameManager {
         System.out.println("Randomly Initializing Player Order");
         ArrayList<Player> orderedPlayers = new ArrayList<>();
         List<Integer> shuffledList = generateShuffledList(getNumberOfPlayers());
-        for (int index : shuffledList){
+        for (int index : shuffledList) {
             orderedPlayers.add(players.get(index - 1));
         }
         this.players = orderedPlayers;
         int i = 1;
-        for(Player player: players){
+        for (Player player : players) {
             player.setPlayerID(i);
             System.out.println("Player " + i + ": " + player.getname());
-            i +=1;
+            i += 1;
         }
-        
+
     }
+
     // Randomly Generate a list of numbers from 1 to n for player shuffling
     public static List<Integer> generateShuffledList(int n) {
         List<Integer> list = IntStream.rangeClosed(1, n)
-                                      .boxed()
-                                      .collect(Collectors.toList());
+                .boxed()
+                .collect(Collectors.toList());
         Collections.shuffle(list);
         return list;
     }
-    public static void PlayerTurn(Player player, Scanner scanner){
-        // if the player is working a role 
-        if(player.getWorkingRole()){
-            // the player must act or rehears because you cannot walk off a role once you are on it
+
+    public static void PlayerTurn(Player player) {
+        // if the player is working a role
+        if (player.getWorkingRole()) {
+            // the player must act or rehears because you cannot walk off a role once you
+            // are on it
             System.out.println("Press 1 to act, Press 2 to Rehearse");
-
-
-        }else{
+            
+        } else {
             System.out.println("Press 1 to move, 2 to take a role. 3 to do nothing.");
             // if they move they can then take a roel
-            // after moving they can take a role 
+            // after moving they can take a role
 
         }
     }
-    
+
     // Getters
     public List<Player> getPlayers() {
         return players;
     }
+
     public int getTotalDays() {
         return TotalDays;
     }
+
     public Player getCurrent_Player() {
         return current_Player;
     }

@@ -91,6 +91,9 @@ public class Player {
     }
 
     // Setters
+    public void setLocation(Set location) {
+        this.location = location;
+    }
     public void setPlayerID(int playerID) {
         this.playerID = playerID;
     }
