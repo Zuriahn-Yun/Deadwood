@@ -17,7 +17,6 @@ public class LocationManager {
     public void displayLocation() {
         if (activePlayer != null) {
             for (Player player : players) {
-
                 if (player.getPlayerID() == activePlayerId) {
                     System.out.println(
                             "Active Player " + player.getPlayerID() + "  Location:  " + player.getLocation().getName());

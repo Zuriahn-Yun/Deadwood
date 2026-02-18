@@ -5,8 +5,8 @@ import java.util.*;
  */
 public class UserInput{
     Scanner scanner = new Scanner(System.in);
-    static LocationManager locationManager;
-
+    static LocationManager locationManager = null;
+    static GameManager gameManager = null;
     
     public void EndGame(){
         System.out.println("Ending Game");
@@ -15,18 +15,17 @@ public class UserInput{
     public void help(){
         System.out.println("Commands" + "\n"  + "[end] - Ends the Game" +  "\n" + "[help] - Provides Commands" + "\n" + "[location] - Displays all players location and active player " + "\n");
     }
-    public void EndTurn(){
-        System.out.println("Ending Turn");
-        // End the Players turn 
-    }
     public void displayLocation(){
         if(locationManager != null){
+            System.out.println("hello");
             locationManager.displayLocation();
         }
         else{
             System.out.println("Location Display is not Available at this time.");
         }
-        
+    }
+    public void identify(){
+        gameManager.getCurrent_Player().Identify();
     }
 
     public String getInput(){
@@ -38,12 +37,17 @@ public class UserInput{
             help();
         }
         if(userInput.equalsIgnoreCase("location")){
-            locationManager.displayLocation();
+            displayLocation();
+        }
+        if(userInput.equalsIgnoreCase("identify")){
+            identify();
         }
         return userInput;
     }
     public static void setLocationManager(LocationManager locationManager) {
         UserInput.locationManager = locationManager;
     }
-
+    public static void setGameManager(GameManager gameManager) {
+        UserInput.gameManager = gameManager;
+    }
 }

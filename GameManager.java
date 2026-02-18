@@ -10,10 +10,10 @@ public class GameManager {
     private Player current_Player;
     private int NumberOfPlayers;
     List<Player> players = new ArrayList<>();
-    private int currDay = 1;
     private int TotalDays = 4;
     UserInput userInput = new UserInput();
 
+   
     // Initialize the number of players for the game
     public void initializeNumberOfPlayers() {
         Integer numPlayers = null;
@@ -95,7 +95,7 @@ public class GameManager {
     }
 
     // Randomly Generate a list of numbers from 1 to n for player shuffling
-    public static List<Integer> generateShuffledList(int n) {
+    public List<Integer> generateShuffledList(int n) {
         List<Integer> list = IntStream.rangeClosed(1, n)
                 .boxed()
                 .collect(Collectors.toList());
@@ -103,20 +103,11 @@ public class GameManager {
         return list;
     }
 
-    public static void PlayerTurn(Player player) {
-        // if the player is working a role
-        if (player.getWorkingRole()) {
-            // the player must act or rehears because you cannot walk off a role once you
-            // are on it
-            System.out.println("Press 1 to act, Press 2 to Rehearse");
-            
-        } else {
-            System.out.println("Press 1 to move, 2 to take a role. 3 to do nothing.");
-            // if they move they can then take a roel
-            // after moving they can take a role
-
-        }
+    public void PlayerTurn(Player player) {
+        
     }
+
+   
 
     // Getters
     public List<Player> getPlayers() {
