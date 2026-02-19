@@ -12,6 +12,7 @@ public class LocationManager {
     public LocationManager(List<Player> players) {
         this.players = players;
     }
+    
 
     // Display the Location of all players and indicate the active player
     public void displayLocation() {
@@ -43,5 +44,7 @@ public class LocationManager {
         this.activePlayerId = playerID;
         this.activePlayer = players.get(playerID);
     }
-
+    public void getNeighbors(String name){
+        
+    }
 }

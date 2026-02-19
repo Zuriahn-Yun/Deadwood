@@ -4,9 +4,14 @@ import java.util.*;
  * 
  */
 public class MoveManager {
-    private ArrayList<Set> sets = new ArrayList<>();
 
-    public void move(Player player,UserInput userInput) {
+    ArrayList<Set> sets;
+
+    public MoveManager(ArrayList<Set> sets) {
+        this.sets = sets;
+    }
+
+    public void move(Player player, UserInput userInput) {
         System.out.println("Current Location: " + player.getLocation().getName());
         String currentlocation = player.getLocation().getName();
         // Iterate through possible locations
@@ -34,11 +39,12 @@ public class MoveManager {
 
     // Get the Destination
     public Optional<Set> getDestination(String destinationName) {
-            for (Set currSet : sets) {
-                if (currSet.getName() == destinationName) {
-                    return Optional.ofNullable(currSet);
-                }
+        for (Set currSet : sets) {
+            if (currSet.getName().equals(destinationName)) {
+                return Optional.ofNullable(currSet);
             }
-            return Optional.empty();
+        }
+        return Optional.empty();
     }
+
 }

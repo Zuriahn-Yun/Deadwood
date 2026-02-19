@@ -7,6 +7,15 @@ public class Role {
     private String name;
     private int rank;
     private boolean occupied = false;
+    boolean isExtra;
+    String line;
+    Integer level;
+    public Role(String name, int level, String line, boolean isExtra){
+        this.name = name;
+        this.level = level;
+        this.line = line;
+        this.isExtra = isExtra;
+    }
 
     // Setters
     public void setName(String name) {
