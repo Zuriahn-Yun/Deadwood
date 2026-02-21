@@ -199,51 +199,14 @@ public class Board {
         return sets;
     }
 
-    // PARSE CARDS (SCENES) - AMY
-    public ArrayList<Cards> parseCards() throws Exception {
-        ArrayList<Cards> deck = new ArrayList<>();
-        
-        File xmlFile = new File("xml/cards.xml");
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        Document doc = builder.parse(xmlFile);
-        doc.getDocumentElement().normalize();
-
-        NodeList cardNodes = doc.getElementsByTagName("card");
-
-        for (int i = 0; i < cardNodes.getLength(); i++) {
-            Element cardElem = (Element) cardNodes.item(i);
-            
-            // Extract attributes for the Scenes constructor
-            String cardName = cardElem.getAttribute("name");
-            int budget = Integer.parseInt(cardElem.getAttribute("budget"));
-            
-            // Dig into the <scene> tag for number and description
-            Element sceneElem = (Element) cardElem.getElementsByTagName("scene").item(0);
-            int sceneNum = Integer.parseInt(sceneElem.getAttribute("number"));
-            String desc = sceneElem.getTextContent().trim();
-
-            // Create the Scenes object
-            Cards sceneCard = new Cards(cardName, budget, sceneNum, desc);
-
-            // Parse the <part> tags (starring roles) for this specific card
-            NodeList partNodes = cardElem.getElementsByTagName("part");
-            for (int j = 0; j < partNodes.getLength(); j++) {
-                Element partElem = (Element) partNodes.item(j);
-                
-                Part starringRole = new Part();
-                starringRole.setName(partElem.getAttribute("name"));
-                starringRole.setLevel(Integer.parseInt(partElem.getAttribute("level")));
-                starringRole.setLine(partElem.getElementsByTagName("line").item(0).getTextContent());
-                starringRole.setArea(getArea(partElem)); 
-
-                // Add the fully formed part to the scene card
-                sceneCard.addRole(starringRole); 
+    public int getRemainingScenes() {
+        int count = 0;
+        for (Set set : sets) {
+            // Check for active scenes
+            if (set.getCurrentScene() != null) {
+                count++;
             }
-            deck.add(sceneCard);
         }
-
-        Collections.shuffle(deck); 
-        return deck;
-        }
+        return count;
+    }
 }

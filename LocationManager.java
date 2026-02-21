@@ -13,7 +13,15 @@ public class LocationManager {
         this.players = players;
     }
     
-
+    public List<Player> getPlayersAtLocation(Set currSet){
+        ArrayList<Player> res = new ArrayList<>();
+        for(Player player: players){
+            if(player.getLocation() == currSet){
+                res.add(player);
+            }
+        }
+        return res;
+    }
     // Display the Location of all players and indicate the active player
     public void displayLocation() {
         if (activePlayer != null) {
@@ -42,9 +50,6 @@ public class LocationManager {
     // Based on Player Id
     public void setActivePlayer(Integer playerID) {
         this.activePlayerId = playerID;
-        this.activePlayer = players.get(playerID);
-    }
-    public void getNeighbors(String name){
-        
+        this.activePlayer = players.get(playerID - 1);
     }
 }

@@ -11,6 +11,7 @@ public class GameManager {
     private int NumberOfPlayers;
     List<Player> players = new ArrayList<>();
     private int TotalDays = 4;
+    public int currDay = 0;
     UserInput userInput = new UserInput();
     Deck deck;
     Board board;
@@ -22,16 +23,17 @@ public class GameManager {
         this.deck = deck;
         this.board = board;
         this.castingOffice = castingOffice;
-       
+
         this.moveManager = moveManager;
     }
+
     public void setLocationManager(LocationManager locationManager) {
         this.locationManager = locationManager;
     }
+
     // Initialize the number of players for the game
     public void initializeNumberOfPlayers() {
-        Integer numPlayers = null;
-        numPlayers = readPlayers();
+        Integer numPlayers = readPlayers();
         setNumberofPlayers(numPlayers);
         setupDiffGroupSizes();
         System.out.println("Starting Game With: " + numPlayers + " Players");
@@ -126,14 +128,20 @@ public class GameManager {
             if (player.getWorkingRole()) {
                 if (!player.hasActed) {
                     availableActions.add("Act");
-                    availableActions.add("Rehearse");
+                    int budget = (player.getLocation()).getCurrentScene().getBudget();
+                    // Check if the succeess is not guaranteed
+                    if (1 + player.getRehearsalChips() < budget) {
+                        availableActions.add("Rehearse");
+                    } else {
+                        System.out.println("Success is guaranteed.Player must Act.");
+                    }
                 }
             } else {
                 if (!player.hasMoved)
                     availableActions.add("Move");
-                if (!player.isAtCastingOffice)
+                if (player.isAtCastingOffice)
                     availableActions.add("Upgrade Rank");
-                if (!player.canTakeRole)
+                if (!player.canTakePart)
                     availableActions.add("Take Role");
             }
             availableActions.add("End Turn");
@@ -152,35 +160,190 @@ public class GameManager {
 
     public void handleChoice(Player player, String choice) {
         if (choice.equalsIgnoreCase("Move")) {
-            moveManager.move(player,userInput);
+            moveManager.move(player, userInput);
             player.hasMoved = true;
-        }
-        if (choice.equalsIgnoreCase("Act")) {
-            player.act();
-        }
-        if (choice.equalsIgnoreCase("Rehearse")) {
+        } else if (choice.equalsIgnoreCase("Act")) {
+            act(player);
+        } else if (choice.equalsIgnoreCase("Rehearse")) {
             player.rehearse();
-        }
-        if (choice.equalsIgnoreCase("Upgrade Rank")) {
+        } else if (choice.equalsIgnoreCase("Upgrade Rank")) {
             upgradePlayer(player, castingOffice);
-        }
-        if (choice.equalsIgnoreCase("Take Role")) {
-            player.takeRole();
+        } else if (choice.equalsIgnoreCase("Take Role")) {
+            takeRole(player);
+        } else if (choice.equalsIgnoreCase("End Turn")) {
+            player.current_Player = false;
         } else {
             System.out.println("Not a valid Action.");
         }
     }
-    public void takeRole(Player player){
+
+    public void takeRole(Player player) {
         if (!(player.getLocation() instanceof Set)) {
-        System.out.println("You can't take a role here!");
-        return;
+            System.out.println("You can't take a role here.");
+            return;
         }
 
         Set currSet = (Set) player.getLocation();
-        
-    
+        Scene currScene = currSet.getCurrentScene();
+        if(currScene == null){
+            System.out.println("You cannot take any roles here.");
+            return;
+        }
+        List<Part> offCardParts = currSet.getParts();
+        List<Part> onCardParts = currScene.getParts();
+
+        System.out.println("Starring Roles On-Card: ");
+        for (int i = 0; i < onCardParts.size(); i++) {
+            System.out.println(
+                    i + 1 + ": " + onCardParts.get(i).getName() + "[Rank " + onCardParts.get(i).getLevel() + "]");
+        }
+        System.out.println("Available Extra Roles (Off-Card): ");
+        int extra = onCardParts.size();
+        for (int i = 0; i < offCardParts.size(); i++) {
+            System.out.println((i + 1 + extra) + ": " + offCardParts.get(i).getName() + "[Rank "
+                    + offCardParts.get(i).getLevel() + "]");
+        }
+        // Grab Total Roles
+        int totalRoles = onCardParts.size() + offCardParts.size();
+        // Get Player Choice
+        int choice = Integer.parseInt(pickPlayerArgs(1, totalRoles));
+
+        Part chosenPart;
+        if (choice <= onCardParts.size()) {
+            chosenPart = onCardParts.get(choice - 1);
+        } else {
+            chosenPart = offCardParts.get(choice - 1 -extra);
+        }
+        // Ensure Player can take the role
+        if (player.getRank() >= chosenPart.getLevel()) {
+            player.setWorkingRole(true);
+            player.setPart(chosenPart);
+            player.current_Player = false;
+            System.out.println("Role taken: " + chosenPart.getName());
+        } else {
+            System.out.println("Rank too low for this role.");
+        }
+
     }
-   
+
+    public void act(Player player) {
+        Set currSet = player.getLocation();
+        int roll = new Random().nextInt(6) + 1;
+        int total = roll + player.getRehearsalChips();
+        System.out.println("Dice Value: " + roll + " + Chips: " + player.getRehearsalChips());
+        if (total >= player.getLocation().getCurrentScene().getBudget()) {
+            System.out.println("Success.");
+            Scene wrappedScene = currSet.removeTake();
+            // If we are a starring actor we make 2 credits
+            if (player.getPart().getStarringRole()) {
+                player.addCredits(2);
+                // Otherwise its a dollar and a credit
+            } else {
+                player.addDollars(1);
+                player.addCredits(1);
+            }
+
+            if (wrappedScene != null) {
+                handlePayout(wrappedScene, currSet);
+            }
+        } else {
+            System.out.println("Failure.");
+            // Consolation: Extras get $1 even if they fail. Stars get nothing.
+            if (!player.getPart().getStarringRole()) {
+                System.out.println("You Receive a 1 dollar payment. ");
+                player.addDollars(1);
+            }
+        }
+        player.current_Player = false;
+    }
+
+    public void handlePayout(Scene currScene, Set currSet) {
+        List<Player> localPlayers = locationManager.getPlayersAtLocation(currSet);
+        List<Player> onCardPlayers = new ArrayList<>();
+        List<Player> offCardPlayers = new ArrayList<>();
+        Integer budget = currScene.getBudget();
+        for (Player player : localPlayers) {
+            if (player.getPart().getStarringRole()) {
+                onCardPlayers.add(player);
+            } else {
+                offCardPlayers.add(player);
+            }
+        }
+        if (!onCardPlayers.isEmpty()) {
+            distributeBonuses(currScene, onCardPlayers, offCardPlayers);
+        } else {
+            System.out.println("No Starring Actors. No bonuses.");
+        }
+        // cleanup local players who are done working the set
+        for (Player player : localPlayers) {
+            player.setWorkingRole(false);
+            player.setPart(null);
+            player.addRehearsalChips(-player.getRehearsalChips());
+        }
+    }
+
+    public void distributeBonuses(Scene scene, List<Player> onCard, List<Player> offCard) {
+        Random random = new Random();
+        int budget = scene.getBudget();
+
+        List<Integer> rolls = new ArrayList<>();
+        for (int i = 0; i < budget; i++) {
+            rolls.add(random.nextInt(6) + 1);
+        }
+        // sort rolls
+        Collections.sort(rolls, Collections.reverseOrder());
+        List<Part> starringParts = scene.getParts();
+        // order starringParts
+        starringParts.sort((p1, p2) -> Integer.compare(p2.getLevel(), p1.getLevel()));
+        for (int j = 0; j < rolls.size(); j++) {
+            int dieValue = rolls.get(j);
+            // incase more dice than starring roles edge case
+            Part targetPart = starringParts.get(j % starringParts.size());
+
+            for (Player player : onCard) {
+                if (player.getPart() == targetPart) {
+                    player.addDollars(dieValue);
+                    System.out.println(player.getname() + "receives $" + dieValue);
+                }
+            }
+        }
+        // paying extras
+        for (Player player : offCard) {
+            int amount = player.getPart().getLevel();
+            player.addDollars(amount);
+            System.out.println(player.getname() + " receives $" + amount);
+        }
+
+    }
+
+    public void newDay() {
+        for (Set set : board.getSets()) {
+            Scene nextMovie = deck.drawCard();
+            if (nextMovie != null) {
+                set.setCurrentScene(nextMovie);
+            }
+        }
+        // move everyone to the trailer
+        Set trailer = board.getTrailer();
+        for (Player player : players) {
+            player.setLocation(trailer);
+            player.setWorkingRole(false);
+        }
+        currDay += 1;
+        System.out.println("Starting New Day");
+    }
+
+    public void getWinners() {
+        System.out.println("Calculating winners");
+        for (Player player : players) {
+            player.calculateScore();
+        }
+        players.sort((p1, p2) -> Integer.compare(p2.getScore(), p1.getScore()));
+        for (int i = 0; i < players.size(); i++) {
+            System.out.println("Place Number: " + (i + 1));
+            System.out.println(players.get(i).getName() + ":" + players.get(i).getScore() + " points.");
+        }
+    }
 
     public void upgradePlayer(Player player, CastingOffice castingOffice) {
         if (player.isAtCastingOffice) {

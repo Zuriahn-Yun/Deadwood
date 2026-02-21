@@ -13,7 +13,7 @@ public class UserInput{
         System.exit(1);
     }
     public void help(){
-        System.out.println("Commands" + "\n"  + "[end] - Ends the Game" +  "\n" + "[help] - Provides Commands" + "\n" + "[location] - Displays all players location and active player " + "\n");
+        System.out.println("Commands" + "\n"  + "[end] - Ends the Game" +  "\n" + "[help] - Provides Commands" + "\n" + "[location] - Displays all players location and active player " + "\n" + "[score] - Displays all players score");
     }
     public void displayLocation(){
         if(locationManager != null){
@@ -29,20 +29,40 @@ public class UserInput{
     }
 
     public String getInput(){
-        String userInput = scanner.nextLine();
+        String userInput = scanner.nextLine().trim();
         if(userInput.equalsIgnoreCase("end")){
             EndGame();
         }
-        if(userInput.equalsIgnoreCase("help")){
+        else if(userInput.equalsIgnoreCase("help")){
             help();
+            System.out.println("Please enter another choice.");
+            return getInput();
         }
-        if(userInput.equalsIgnoreCase("location")){
+        else if(userInput.equalsIgnoreCase("location")){
             displayLocation();
+            System.out.println("Please enter another choice.");
+            return getInput();
         }
-        if(userInput.equalsIgnoreCase("identify")){
+        else if(userInput.equalsIgnoreCase("identify")){
             identify();
+            System.out.println("Please enter another choice.");
+            return getInput();
+        }
+        else if(userInput.equalsIgnoreCase("score")){
+            scoreBoard();
+            System.out.println("Please enter another choice.");
+            return getInput();
         }
         return userInput;
+    }
+    public void scoreBoard(){
+        if(gameManager != null){
+            for(Player player: gameManager.getPlayers()){  
+                System.out.println(player.getName() + " has " + player.getScore() + " Points");
+            }
+        }else{
+            System.out.println("Score is not Availible yet.");
+        }
     }
     public static void setLocationManager(LocationManager locationManager) {
         UserInput.locationManager = locationManager;

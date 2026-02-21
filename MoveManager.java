@@ -18,7 +18,7 @@ public class MoveManager {
         List<String> neighbors = player.getLocation().getNeighbors();
         HashMap<Integer, String> map = new HashMap<>();
         for (int i = 0; i < neighbors.size(); i++) {
-            System.out.println("Neightbor " + (i + 1) + neighbors.get(i));
+            System.out.println("Neightbor " + (i + 1) +" " + neighbors.get(i));
             map.put(i + 1, neighbors.get(i));
         }
         // Valid user input will be from 1 to neighbors.size

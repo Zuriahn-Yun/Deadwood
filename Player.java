@@ -11,22 +11,22 @@ public class Player {
     public int rank = 1;
     private int dollars = 0;
     private int credits = 0;
-    private Role role;
+    private Part part;
     private Set location;
-    private int Score = 0;
+    private int score = 0;
+    private int rehearsalChips = 0;
+    private boolean isStarringRole = false;
 
     // Turn Flags
     boolean current_Player = false;
-    boolean workingRole = false;
+    boolean workingPart = false;
     boolean isAtCastingOffice = false;
-    boolean canTakeRole = false;
+    boolean canTakePart = false;
 
     boolean hasMoved = false;
     boolean hasUpgraded = false;
     boolean hasActed = false;
     boolean hasRehearsed = false;
-
-    
 
     public void resetFlags() {
         this.hasMoved = false;
@@ -36,33 +36,21 @@ public class Player {
 
     }
 
-    
-    public void takeRole(){
-
+    public void setPart(Part part) {
+        this.part = part;
+        this.workingPart = true;
     }
-
-
-    
-
-    
 
     public Player(Set trailer) {
         this.location = trailer;
     }
 
-    public void move() {
-        System.out.println("moving");
+    public int getRehearsalChips() {
+        return rehearsalChips;
     }
-
-    // Player Actions
-    public void act() {
-        System.out.println("Actinv");
+    public void addRehearsalChips(Integer add){
+        this.rehearsalChips = this.rehearsalChips + add;
     }
-
-    public void rehearse() {
-        System.out.println("Rehearsing");
-    }
-
     public void Identify() {
         System.out.println("Player Id: " + getPlayerID());
         System.out.println("Player Name: " + getName());
@@ -79,15 +67,31 @@ public class Player {
         setName(name);
     }
 
+    public void rehearse() {
+    this.rehearsalChips++;
+    this.hasActed = true;
+    System.out.println(name + " now has " + rehearsalChips + " rehearsal chips.");
+}
+    public void act(){
+        System.out.println("ACT");
+    }
+    public void takeRole(){
+        System.out.println("Taking role");
+    }
     // Calculate Player Score
     public void calculateScore() {
-        this.Score = getCredits() + getCredits() + (5 * getRank());
+        this.score = this.getCredits() + this.getCredits() + (5 * this.getRank());
     }
-
+    public void addCredits(Integer credits){
+        this.credits = this.credits + credits;
+    }
+    public void addDollars(Integer dollars){
+        this.dollars = this.dollars + dollars;
+    }
     // getters
     public int getScore() {
         calculateScore();
-        return Score;
+        return score;
     }
 
     public int getCredits() {
@@ -95,7 +99,7 @@ public class Player {
     }
 
     public boolean getWorkingRole() {
-        return workingRole;
+        return workingPart;
     }
 
     public String getName() {
@@ -110,8 +114,8 @@ public class Player {
         return dollars;
     }
 
-    public Role getRole() {
-        return role;
+    public Part getPart(){
+        return part;
     }
 
     public Set getLocation() {
@@ -127,6 +131,9 @@ public class Player {
     }
 
     // Setters
+    public void setWorkingRole(boolean working) {
+        this.workingPart = working;
+    }
     public void setLocation(Set location) {
         this.location = location;
     }
@@ -149,10 +156,6 @@ public class Player {
 
     public void setRank(int rank) {
         this.rank = rank;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
     }
 
     public void Move(Set set) {

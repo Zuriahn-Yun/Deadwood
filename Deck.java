@@ -1,12 +1,15 @@
+
 import java.io.File;
 import java.util.*;
 import javax.xml.parsers.*;
 import org.w3c.dom.*;
+
 /**
- * 
+ *
  */
 public class Deck {
-    public static ArrayList<Cards> deck = new ArrayList<>();
+
+    private ArrayList<Scene> deck = new ArrayList<>();
 
     // PARSE CARDS (SCENES)
     public Deck() throws Exception {
@@ -31,7 +34,7 @@ public class Deck {
             String desc = sceneElem.getTextContent().trim();
 
             // Create the Scenes object
-            Cards sceneCard = new Cards(cardName, budget, sceneNum, desc);
+            Scene sceneCard = new Scene(cardName, sceneNum, budget, desc);
 
             // Parse the <part> tags (starring roles) for this specific card
             NodeList partNodes = cardElem.getElementsByTagName("part");
@@ -45,14 +48,15 @@ public class Deck {
                 starringRole.setArea(getArea(partElem));
 
                 // Add the fully formed part to the scene card
-                sceneCard.addRole(starringRole);
+                sceneCard.addPart(starringRole);
             }
-           
-            Deck.deck.add(sceneCard);
+
+            this.deck.add(sceneCard);
         }
 
         Collections.shuffle(deck);
     }
+
     // Parse Area, returns a <String,String> Hashmap
     public HashMap<String, String> getArea(Element nodeElement) {
         HashMap<String, String> map = new HashMap<>();
@@ -68,5 +72,16 @@ public class Deck {
             System.out.print(e);
         }
         return map;
+    }
+
+    public Scene drawCard() {
+        if (deck.isEmpty()) {
+            return null;
+        }
+        return deck.remove(0);
+    }
+
+    public Integer numberScenes() {
+        return deck.size();
     }
 }
