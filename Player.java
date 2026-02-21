@@ -80,7 +80,7 @@ public class Player {
     }
     // Calculate Player Score
     public void calculateScore() {
-        this.score = this.getCredits() + this.getCredits() + (5 * this.getRank());
+        this.score = this.getDollars() + this.getCredits() + (5 * this.getRank());
     }
     public void addCredits(Integer credits){
         this.credits = this.credits + credits;
