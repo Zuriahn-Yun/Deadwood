@@ -72,12 +72,6 @@ public class Player {
     this.hasActed = true;
     System.out.println(name + " now has " + rehearsalChips + " rehearsal chips.");
 }
-    public void act(){
-        System.out.println("ACT");
-    }
-    public void takeRole(){
-        System.out.println("Taking role");
-    }
     // Calculate Player Score
     public void calculateScore() {
         this.score = this.getDollars() + this.getCredits() + (5 * this.getRank());

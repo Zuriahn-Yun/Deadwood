@@ -24,3 +24,6 @@ Numbers: Use numbers (1, 2, 3) to pick actions from the menus.
 
 How to Win: The game ends after 3 or 4 days (depending on player amount). The winner is the person with the most points based on:
 Money + Credits + (5 × Your Rank)
+
+Commands 
+type "help" to list available commands
