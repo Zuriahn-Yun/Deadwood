@@ -13,7 +13,11 @@ public class UserInput{
         System.exit(1);
     }
     public void help(){
-        System.out.println("Commands" + "\n"  + "[end] - Ends the Game" +  "\n" + "[help] - Provides Commands" + "\n" + "[location] - Displays all players location and active player " + "\n" + "[score] - Displays all players score");
+        System.out.println("Commands" + "\n"  
+        + "[end] - Ends the Game" +  "\n" 
+        + "[help] - Provides Commands" + "\n" 
+        + "[location] - Displays all players location and active player " + "\n" 
+        + "[score] - Displays all players score ");
     }
     public void displayLocation(){
         if(locationManager != null){
