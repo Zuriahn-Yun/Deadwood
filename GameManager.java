@@ -19,11 +19,16 @@ public class GameManager {
     LocationManager locationManager;
     MoveManager moveManager;
 
+    List<String> currencyOptions = Arrays.asList("Select currency: 1" , "Dollars, 2" , "Credits, 3. CANCEL");
+
+    public List<String> getCurrencyOptions() {
+        return currencyOptions;
+    }
+
     public GameManager(Deck deck, Board board, CastingOffice castingOffice, MoveManager moveManager) {
         this.deck = deck;
         this.board = board;
         this.castingOffice = castingOffice;
-
         this.moveManager = moveManager;
     }
 
@@ -32,6 +37,7 @@ public class GameManager {
     }
 
     // Initialize the number of players for the game
+    // this is now done by the controller but it is not yet initialized..?
     public void initializeNumberOfPlayers() {
         Integer numPlayers = readPlayers();
         setNumberofPlayers(numPlayers);
@@ -39,6 +45,7 @@ public class GameManager {
         System.out.println("Starting Game With: " + numPlayers + " Players");
     }
 
+    // this is now done by the controller
     public Integer readPlayers() {
         while (true) {
             System.out.println("Please Enter Number of Players");
@@ -197,7 +204,7 @@ public class GameManager {
             System.out.println(
                     i + 1 + ": " + onCardParts.get(i).getName() + "[Rank " + onCardParts.get(i).getLevel() + "]");
         }
-        System.out.println("Available Extra Roles (Off-Card): ");
+        System.out.println("Available Extra Roles (Off-Card):" );
         int extra = onCardParts.size();
         for (int i = 0; i < offCardParts.size(); i++) {
             System.out.println((i + 1 + extra) + ": " + offCardParts.get(i).getName() + "[Rank "
@@ -343,6 +350,11 @@ public class GameManager {
             System.out.println("Place Number: " + (i + 1));
             System.out.println(players.get(i).getName() + ":" + players.get(i).getScore() + " points.");
         }
+    }
+    public ArrayList<String> getPlayerOptions(){
+        ArrayList<String> res = new ArrayList<>();
+        
+        return res;
     }
 
     public void upgradePlayer(Player player, CastingOffice castingOffice) {

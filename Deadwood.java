@@ -6,6 +6,9 @@ public class Deadwood {
     public static void main(String[] args) {
         // Start the Game
         System.out.println("Game Starting");
+        GameView view = new View.terminalView();
+        //GameView view = new View.guiView();
+
         try {
             // Initialize Board,Deck and Casting Office to be passed to the Game Manager
             Board board = new Board();
