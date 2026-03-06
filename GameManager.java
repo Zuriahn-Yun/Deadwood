@@ -7,12 +7,16 @@ import java.util.stream.IntStream;
 *
 */
 public class GameManager {
+    // Player Data
     private Player current_Player;
     private int NumberOfPlayers;
     List<Player> players = new ArrayList<>();
+
+    // Day Game Data
     private int TotalDays = 4;
     public int currDay = 0;
-    UserInput userInput = new UserInput();
+    
+    // XML Data
     Deck deck;
     Board board;
     CastingOffice castingOffice;
@@ -89,36 +93,33 @@ public class GameManager {
     }
 
     // Initialize Player Objects with names and Ids;
-    public void initializePlayers(Set trailer) {
-        for (int i = 0; i < getNumberOfPlayers(); i++) {
-            // Create a player Object
-            Player player = new Player(trailer);
-            System.out.println("Get Player Name: ");
-            String name = userInput.getInput();
-            player.setName(name);
-            // Add to Player List
-            players.add(player);
-        }
-        // Randomly Initialize Player Order
-        System.out.println("Randomly Initializing Player Order");
-        ArrayList<Player> orderedPlayers = new ArrayList<>();
-        List<Integer> shuffledList = generateShuffledList(getNumberOfPlayers());
-        for (int index : shuffledList) {
-            orderedPlayers.add(players.get(index - 1));
-        }
-        this.players = orderedPlayers;
-        int i = 1;
-        for (Player player : players) {
-            player.setPlayerID(i);
-            System.out.println("Player " + i + ": " + player.getname());
-            i += 1;
-        }
+    // public void initializePlayers(Set trailer) {
+    //     for (int i = 0; i < getNumberOfPlayers(); i++) {
+    //         // Create a player Object
+    //         Player player = new Player(trailer);
+    //         System.out.println("Get Player Name: ");
+    //         String name = userInput.getInput();
+    //         player.setName(name);
+    //         // Add to Player List
+    //         players.add(player);
+    //     }
+    //     // Randomly Initialize Player Order
+    //     System.out.println("Randomly Initializing Player Order");
+    //     ArrayList<Player> orderedPlayers = new ArrayList<>();
+    //     List<Integer> shuffledList = generateShuffledList(getNumberOfPlayers());
+    //     for (int index : shuffledList) {
+    //         orderedPlayers.add(players.get(index - 1));
+    //     }
+    //     this.players = orderedPlayers;
+    //     int i = 1;
+    //     for (Player player : players) {
+    //         player.setPlayerID(i);
+    //         System.out.println("Player " + i + ": " + player.getname());
+    //         i += 1;
+    //     }
 
-    }
-    public boolean gameOver(){
-        // This is wrong
-        return this.currDay == this.TotalDays;
-    }
+    // }
+
     // Randomly Generate a list of numbers from 1 to n for player shuffling
     public List<Integer> generateShuffledList(int n) {
         List<Integer> list = IntStream.rangeClosed(1, n)
@@ -128,63 +129,63 @@ public class GameManager {
         return list;
     }
 
-    public void playerTurn(Player player) {
-        player.current_Player = true;
-        player.resetFlags();
-        while (player.current_Player) {
-            List<String> availableActions = new ArrayList<>();
-            // Decide the options the player has on this turn
-            if (player.getWorkingRole()) {
-                if (!player.hasActed) {
-                    availableActions.add("Act");
-                    int budget = (player.getLocation()).getCurrentScene().getBudget();
-                    // Check if the succeess is not guaranteed
-                    if (1 + player.getRehearsalChips() < budget) {
-                        availableActions.add("Rehearse");
-                    } else {
-                        System.out.println("Success is guaranteed.Player must Act.");
-                    }
-                }
-            } else {
-                if (!player.hasMoved)
-                    availableActions.add("Move");
-                if (player.isAtCastingOffice)
-                    availableActions.add("Upgrade Rank");
-                if (!player.canTakePart)
-                    availableActions.add("Take Role");
-            }
-            availableActions.add("End Turn");
-            // List Avaiblible actions
-            for (int i = 1; i < availableActions.size() + 1; i++) {
-                System.out.println("Press " + i + " for action " + availableActions.get(i - 1));
-            }
-            String choice = pickPlayerArgs(1, availableActions.size());
-            int index = Integer.parseInt(choice) - 1;
-            String action = availableActions.get(index);
-            handleChoice(player, action);
+    // public void playerTurn(Player player) {
+    //     player.current_Player = true;
+    //     player.resetFlags();
+    //     while (player.current_Player) {
+    //         List<String> availableActions = new ArrayList<>();
+    //         // Decide the options the player has on this turn
+    //         if (player.getWorkingRole()) {
+    //             if (!player.hasActed) {
+    //                 availableActions.add("Act");
+    //                 int budget = (player.getLocation()).getCurrentScene().getBudget();
+    //                 // Check if the succeess is not guaranteed
+    //                 if (1 + player.getRehearsalChips() < budget) {
+    //                     availableActions.add("Rehearse");
+    //                 } else {
+    //                     System.out.println("Success is guaranteed.Player must Act.");
+    //                 }
+    //             }
+    //         } else {
+    //             if (!player.hasMoved)
+    //                 availableActions.add("Move");
+    //             if (player.isAtCastingOffice)
+    //                 availableActions.add("Upgrade Rank");
+    //             if (!player.canTakePart)
+    //                 availableActions.add("Take Role");
+    //         }
+    //         availableActions.add("End Turn");
+    //         // List Avaiblible actions
+    //         for (int i = 1; i < availableActions.size() + 1; i++) {
+    //             System.out.println("Press " + i + " for action " + availableActions.get(i - 1));
+    //         }
+    //         String choice = pickPlayerArgs(1, availableActions.size());
+    //         int index = Integer.parseInt(choice) - 1;
+    //         String action = availableActions.get(index);
+    //         handleChoice(player, action);
 
-        }
+    //     }
 
-    }
+    // }
 
-    public void handleChoice(Player player, String choice) {
-        if (choice.equalsIgnoreCase("Move")) {
-            moveManager.move(player, userInput);
-            player.hasMoved = true;
-        } else if (choice.equalsIgnoreCase("Act")) {
-            act(player);
-        } else if (choice.equalsIgnoreCase("Rehearse")) {
-            player.rehearse();
-        } else if (choice.equalsIgnoreCase("Upgrade Rank")) {
-            upgradePlayer(player, castingOffice);
-        } else if (choice.equalsIgnoreCase("Take Role")) {
-            takeRole(player);
-        } else if (choice.equalsIgnoreCase("End Turn")) {
-            player.current_Player = false;
-        } else {
-            System.out.println("Not a valid Action.");
-        }
-    }
+    // public void handleChoice(Player player, String choice) {
+    //     if (choice.equalsIgnoreCase("Move")) {
+    //         moveManager.move(player, userInput);
+    //         player.hasMoved = true;
+    //     } else if (choice.equalsIgnoreCase("Act")) {
+    //         act(player);
+    //     } else if (choice.equalsIgnoreCase("Rehearse")) {
+    //         player.rehearse();
+    //     } else if (choice.equalsIgnoreCase("Upgrade Rank")) {
+    //         upgradePlayer(player, castingOffice);
+    //     } else if (choice.equalsIgnoreCase("Take Role")) {
+    //         takeRole(player);
+    //     } else if (choice.equalsIgnoreCase("End Turn")) {
+    //         player.current_Player = false;
+    //     } else {
+    //         System.out.println("Not a valid Action.");
+    //     }
+    // }
 
     public void takeRole(Player player) {
         if (!(player.getLocation() instanceof Set)) {
@@ -235,42 +236,54 @@ public class GameManager {
 
     }
 
-    public void act(Player player) {
+    // This should return a string 
+    public String act(Player player) {
         Set currSet = player.getLocation();
         int roll = new Random().nextInt(6) + 1;
         int total = roll + player.getRehearsalChips();
-        System.out.println("Dice Value: " + roll + " + Chips: " + player.getRehearsalChips());
+        StringBuilder res = new StringBuilder();
+        res.append("Dice Value: " + roll + " + Chips: " + player.getRehearsalChips());
+
+        
         if (total >= player.getLocation().getCurrentScene().getBudget()) {
-            System.out.println("Success.");
+            res.append("Success.");
             Scene wrappedScene = currSet.removeTake();
+
             // If we are a starring actor we make 2 credits
             if (player.getPart().getStarringRole()) {
                 player.addCredits(2);
                 // Otherwise its a dollar and a credit
+                res.append("You earned 2 Credits.");
             } else {
                 player.addDollars(1);
                 player.addCredits(1);
+                res.append("You earned $1 and 1 Credit.");
             }
 
             if (wrappedScene != null) {
-                handlePayout(wrappedScene, currSet);
+                res.append("\nScene Wrapped!").append(handlePayout(wrappedScene, currSet));
             }
         } else {
-            System.out.println("Failure.");
+            res.append("Failure.");
             // Consolation: Extras get $1 even if they fail. Stars get nothing.
             if (!player.getPart().getStarringRole()) {
-                System.out.println("You Receive a 1 dollar payment. ");
+                System.out.println("As an Extra, you Receive a 1 dollar consolation. ");
                 player.addDollars(1);
+            }else{
+                res.append("As a Star, you receive no consolation.");
             }
         }
         player.current_Player = false;
+        return res.toString();
     }
 
-    public void handlePayout(Scene currScene, Set currSet) {
+    // Must Now Return string
+    public String handlePayout(Scene currScene, Set currSet) {
+        // Get Player location, logic could be moved to location manager....
         List<Player> localPlayers = locationManager.getPlayersAtLocation(currSet);
         List<Player> onCardPlayers = new ArrayList<>();
         List<Player> offCardPlayers = new ArrayList<>();
-        Integer budget = currScene.getBudget();
+
         for (Player player : localPlayers) {
             if (player.getPart().getStarringRole()) {
                 onCardPlayers.add(player);
@@ -278,32 +291,41 @@ public class GameManager {
                 offCardPlayers.add(player);
             }
         }
+        StringBuilder res = new StringBuilder("Payout For " + currScene.getSceneName());
+
         if (!onCardPlayers.isEmpty()) {
-            distributeBonuses(currScene, onCardPlayers, offCardPlayers);
+            res.append(distributeBonuses(currScene, onCardPlayers, offCardPlayers));
         } else {
-            System.out.println("No Starring Actors. No bonuses.");
+            res.append("No Starring Actors. No bonuses.");
         }
         // cleanup local players who are done working the set
         for (Player player : localPlayers) {
             player.setWorkingRole(false);
             player.setPart(null);
+            // reduce rehearsal chips to zero
             player.addRehearsalChips(-player.getRehearsalChips());
         }
+        res.append("All actors at ").append(currSet.getName()).append(" are now wrappe-up and ready to move");
+        return res.toString();
     }
 
-    public void distributeBonuses(Scene scene, List<Player> onCard, List<Player> offCard) {
+    public String distributeBonuses(Scene scene, List<Player> onCard, List<Player> offCard) {
         Random random = new Random();
         int budget = scene.getBudget();
-
+        StringBuilder res = new StringBuilder();
         List<Integer> rolls = new ArrayList<>();
         for (int i = 0; i < budget; i++) {
             rolls.add(random.nextInt(6) + 1);
         }
         // sort rolls
         Collections.sort(rolls, Collections.reverseOrder());
+        res.append("Bonus Dice Rolled: ").append(rolls).append("\n");
         List<Part> starringParts = scene.getParts();
         // order starringParts
         starringParts.sort((p1, p2) -> Integer.compare(p2.getLevel(), p1.getLevel()));
+
+        res.append("Starring Actor Bonuses");
+        // Pay Starring Actors
         for (int j = 0; j < rolls.size(); j++) {
             int dieValue = rolls.get(j);
             // incase more dice than starring roles edge case
@@ -312,20 +334,22 @@ public class GameManager {
             for (Player player : onCard) {
                 if (player.getPart() == targetPart) {
                     player.addDollars(dieValue);
-                    System.out.println(player.getname() + "receives $" + dieValue);
+                    res.append(player.getname()).append(" receives $").append(dieValue);
                 }
             }
         }
+        
         // paying extras
         for (Player player : offCard) {
             int amount = player.getPart().getLevel();
             player.addDollars(amount);
-            System.out.println(player.getname() + " receives $" + amount);
+            res.append(player.getname()).append(" receives $").append(amount);
         }
 
+        return res.toString();
     }
 
-    public void newDay() {
+    public String newDay() {
         for (Set set : board.getSets()) {
             Scene nextMovie = deck.drawCard();
             if (nextMovie != null) {
@@ -339,26 +363,50 @@ public class GameManager {
             player.setWorkingRole(false);
         }
         currDay += 1;
-        System.out.println("Starting New Day");
+        return ("Starting New Day");
     }
 
-    public void getWinners() {
-        System.out.println("Calculating winners");
+    // Calcualte winners
+    public String getWinners() {
+        StringBuilder res = new StringBuilder();
+        res.append("Calculating winners");
         for (Player player : players) {
             player.calculateScore();
         }
         players.sort((p1, p2) -> Integer.compare(p2.getScore(), p1.getScore()));
         for (int i = 0; i < players.size(); i++) {
-            System.out.println("Place Number: " + (i + 1));
-            System.out.println(players.get(i).getName() + ":" + players.get(i).getScore() + " points.");
+            res.append("Place Number: ").append((i + 1));
+            res.append(players.get(i).getName()).append(":").append(players.get(i).getScore()).append(" points.");
         }
+        return res.toString();
     }
+
+    // What does this do? returns an empy array list??
     public ArrayList<String> getPlayerOptions(){
         ArrayList<String> res = new ArrayList<>();
         
         return res;
     }
 
+    public String processUpgrade(Player player, int level, int currencyType) {
+    // currencyType: 1 for Dollars, 2 for Credits
+    if (!player.isAtCastingOffice) {
+        return "You must be at the Casting Office to upgrade!";
+    }
+
+    boolean success;
+    if (currencyType == 1) {
+        success = castingOffice.dollarUpgradePlayer(player, level);
+    } else {
+        success = castingOffice.creditUpgradePlayer(player, level);
+    }
+
+    return success ? 
+        "Success! You are now Rank " + level : 
+        "Upgrade failed. Insufficient funds.";
+}
+
+    // Upgrade a player backend logic
     public void upgradePlayer(Player player, CastingOffice castingOffice) {
         if (player.isAtCastingOffice) {
             for (int i = 2; i < 7; i++) {
@@ -385,22 +433,22 @@ public class GameManager {
 
     // Assuming its a players turn and they can only pick between int1 to int2
     // Returns a string
-    public String pickPlayerArgs(Integer int1, Integer int2) {
-        while (true) {
-            try {
-                String input = userInput.getInput();
-                int choice = Integer.parseInt(input);
+    // public String pickPlayerArgs(Integer int1, Integer int2) {
+    //     while (true) {
+    //         try {
+    //             String input = userInput.getInput();
+    //             int choice = Integer.parseInt(input);
 
-                if (choice >= int1 && choice <= int2) {
-                    return String.valueOf(choice);
-                } else {
-                    System.out.println("Invalid choice. Please pick a number between " + int1 + " and " + int2 + ".");
-                }
-            } catch (Exception e) {
-                System.out.println("Please provide a valide Integer between " + int1 + " and " + int2);
-            }
-        }
-    }
+    //             if (choice >= int1 && choice <= int2) {
+    //                 return String.valueOf(choice);
+    //             } else {
+    //                 System.out.println("Invalid choice. Please pick a number between " + int1 + " and " + int2 + ".");
+    //             }
+    //         } catch (Exception e) {
+    //             System.out.println("Please provide a valide Integer between " + int1 + " and " + int2);
+    //         }
+    //     }
+    // }
 
     // Getters
     public List<Player> getPlayers() {

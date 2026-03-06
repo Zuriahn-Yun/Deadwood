@@ -116,7 +116,6 @@ public String pickPlayerArgs(Integer int1, Integer int2) {
             }
         }
     }
-
     public void handleChoice(Player player, String choice) {
         if (choice.equalsIgnoreCase("Move")) {
             model.moveManager.move(player, userInput);
@@ -138,8 +137,6 @@ public String pickPlayerArgs(Integer int1, Integer int2) {
     public void startGame(){
         view.display("Starting Game");
         try {
-            // Create Neccessary Classes
-            UserInput userInput = new UserInput();
             initializeNumberOfPlayers();
             LocationManager locationManager = new LocationManager(model.getPlayers());
             model.setLocationManager(locationManager);
@@ -159,7 +156,7 @@ public String pickPlayerArgs(Integer int1, Integer int2) {
                         view.display("Turn: " + player.getName());
 
                         model.locationManager.setActivePlayer(player.getPlayerID());
-                        model.playerTurn(player);
+                        playerTurn(player);
                     }
                 }
                 System.out.println("End of Day " + model.currDay);

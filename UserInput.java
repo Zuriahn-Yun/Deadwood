@@ -13,13 +13,23 @@ public class UserInput{
         System.exit(1);
     }
     public void help(){
-        System.out.println("Commands" + "\n"  
-        + "[end] - Ends the Game" +  "\n" 
-        + "[help] - Provides Commands" + "\n" 
-        + "[location] - Displays all players location and active player " + "\n" 
-        + "[score] - Displays all players score ");
+        System.out.println("""
+                           Commands
+                           [end] - Ends the Game
+                           [help] - Provides Commands
+                           [identify] - Provides Current Player Stats
+                           [location] - Provides Current Player Location
+                           [alllocation] - Displays all players location and active player 
+                           [score] - Displays all players score 
+                            """);
     }
+    // Display Current Player Location
     public void displayLocation(){
+        
+    }
+
+    // Display All Players Locations
+    public void displayAllLocation(){
         if(locationManager != null){
             System.out.println("hello");
             locationManager.displayLocation();
@@ -28,6 +38,7 @@ public class UserInput{
             System.out.println("Location Display is not Available at this time.");
         }
     }
+
     public void identify(){
         gameManager.getCurrent_Player().Identify();
     }
