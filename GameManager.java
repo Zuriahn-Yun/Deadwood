@@ -187,54 +187,65 @@ public class GameManager {
     //     }
     // }
 
-    public void takeRole(Player player) {
-        if (!(player.getLocation() instanceof Set)) {
-            System.out.println("You can't take a role here.");
-            return;
-        }
-
-        Set currSet = (Set) player.getLocation();
-        Scene currScene = currSet.getCurrentScene();
-        if(currScene == null){
-            System.out.println("You cannot take any roles here.");
-            return;
-        }
-        List<Part> offCardParts = currSet.getParts();
-        List<Part> onCardParts = currScene.getParts();
-
-        System.out.println("Starring Roles On-Card: ");
-        for (int i = 0; i < onCardParts.size(); i++) {
-            System.out.println(
-                    i + 1 + ": " + onCardParts.get(i).getName() + "[Rank " + onCardParts.get(i).getLevel() + "]");
-        }
-        System.out.println("Available Extra Roles (Off-Card):" );
-        int extra = onCardParts.size();
-        for (int i = 0; i < offCardParts.size(); i++) {
-            System.out.println((i + 1 + extra) + ": " + offCardParts.get(i).getName() + "[Rank "
-                    + offCardParts.get(i).getLevel() + "]");
-        }
-        // Grab Total Roles
-        int totalRoles = onCardParts.size() + offCardParts.size();
-        // Get Player Choice
-        int choice = Integer.parseInt(pickPlayerArgs(1, totalRoles));
-
-        Part chosenPart;
-        if (choice <= onCardParts.size()) {
-            chosenPart = onCardParts.get(choice - 1);
-        } else {
-            chosenPart = offCardParts.get(choice - 1 -extra);
-        }
-        // Ensure Player can take the role
-        if (player.getRank() >= chosenPart.getLevel()) {
-            player.setWorkingRole(true);
-            player.setPart(chosenPart);
-            player.current_Player = false;
-            System.out.println("Role taken: " + chosenPart.getName());
-        } else {
-            System.out.println("Rank too low for this role.");
-        }
-
+    // updatd takeRole no longer text input/output
+    public String takeRole(Player player, Part chosenPart) {
+    if (player.getRank() >= chosenPart.getLevel()) {
+        player.setWorkingRole(true);
+        player.setPart(chosenPart);
+        player.current_Player = false; // Turn ends after taking a role
+        return "Role taken: " + chosenPart.getName();
+    } else {
+        return "Rank too low for this role.";
     }
+}
+    // public void takeRole(Player player) {
+    //     if (!(player.getLocation() instanceof Set)) {
+    //         System.out.println("You can't take a role here.");
+    //         return;
+    //     }
+
+    //     Set currSet = (Set) player.getLocation();
+    //     Scene currScene = currSet.getCurrentScene();
+    //     if(currScene == null){
+    //         System.out.println("You cannot take any roles here.");
+    //         return;
+    //     }
+    //     List<Part> offCardParts = currSet.getParts();
+    //     List<Part> onCardParts = currScene.getParts();
+
+    //     System.out.println("Starring Roles On-Card: ");
+    //     for (int i = 0; i < onCardParts.size(); i++) {
+    //         System.out.println(
+    //                 i + 1 + ": " + onCardParts.get(i).getName() + "[Rank " + onCardParts.get(i).getLevel() + "]");
+    //     }
+    //     System.out.println("Available Extra Roles (Off-Card):" );
+    //     int extra = onCardParts.size();
+    //     for (int i = 0; i < offCardParts.size(); i++) {
+    //         System.out.println((i + 1 + extra) + ": " + offCardParts.get(i).getName() + "[Rank "
+    //                 + offCardParts.get(i).getLevel() + "]");
+    //     }
+    //     // Grab Total Roles
+    //     int totalRoles = onCardParts.size() + offCardParts.size();
+    //     // Get Player Choice
+    //     int choice = Integer.parseInt(pickPlayerArgs(1, totalRoles));
+
+    //     Part chosenPart;
+    //     if (choice <= onCardParts.size()) {
+    //         chosenPart = onCardParts.get(choice - 1);
+    //     } else {
+    //         chosenPart = offCardParts.get(choice - 1 -extra);
+    //     }
+    //     // Ensure Player can take the role
+    //     if (player.getRank() >= chosenPart.getLevel()) {
+    //         player.setWorkingRole(true);
+    //         player.setPart(chosenPart);
+    //         player.current_Player = false;
+    //         System.out.println("Role taken: " + chosenPart.getName());
+    //     } else {
+    //         System.out.println("Rank too low for this role.");
+    //     }
+
+    // }
 
     // This should return a string 
     public String act(Player player) {
@@ -388,49 +399,64 @@ public class GameManager {
         return res;
     }
 
-    public String processUpgrade(Player player, int level, int currencyType) {
-    // currencyType: 1 for Dollars, 2 for Credits
+    // logic fixed
+    public String processUpgrade(Player player, int requestedLevel, String currencyType) {
+
     if (!player.isAtCastingOffice) {
         return "You must be at the Casting Office to upgrade!";
     }
 
-    boolean success;
-    if (currencyType == 1) {
-        success = castingOffice.dollarUpgradePlayer(player, level);
-    } else {
-        success = castingOffice.creditUpgradePlayer(player, level);
+    //logic fixed
+    if (requestedLevel <= player.getRank()) {
+        return "You are already rank " + player.getRank() + " or higher!";
     }
 
-    return success ? 
-        "Success! You are now Rank " + level : 
-        "Upgrade failed. Insufficient funds.";
+    try {
+        if (currencyType.equalsIgnoreCase("dollars")) {
+            castingOffice.dollarUpgradePlayer(player, requestedLevel);
+        } else if (currencyType.equalsIgnoreCase("credits")) {
+            castingOffice.creditUpgradePlayer(player, requestedLevel);
+        }
+        
+        //update the player's rank in the model
+        player.setRank(requestedLevel); 
+        return "Success! You are now Rank " + requestedLevel;
+
+    } catch (IllegalAccessError e) {
+        return "Upgrade failed: " + e.getMessage();
+    }
 }
+//     public String processUpgrade(Player player, int level, int currencyType) {
+//     // currencyType: 1 for Dollars, 2 for Credits
+//     if (!player.isAtCastingOffice) {
+//         return "You must be at the Casting Office to upgrade!";
+//     }
+
+//     boolean success;
+//     if (currencyType == 1) {
+//         success = castingOffice.dollarUpgradePlayer(player, level);
+//     } else {
+//         success = castingOffice.creditUpgradePlayer(player, level);
+//     }
+
+//     return success ? 
+//         "Success! You are now Rank " + level : 
+//         "Upgrade failed. Insufficient funds.";
+// }
 
     // Upgrade a player backend logic
-    public void upgradePlayer(Player player, CastingOffice castingOffice) {
-        if (player.isAtCastingOffice) {
-            for (int i = 2; i < 7; i++) {
-                System.out.println("Level: " + i + "Cost in Dollars: " + castingOffice.dollarUpgradeMap.get(i)
-                        + " Cost in Credits: " + castingOffice.creditUpgradeMap.get(i));
+        public String upgradePlayer(Player player, int level, String currency) {
+            try {
+                if (currency.equalsIgnoreCase("dollar")) {
+                    castingOffice.dollarUpgradePlayer(player, level);
+                } else {
+                    castingOffice.creditUpgradePlayer(player, level);
+                }
+                return "Upgraded to Rank " + level;
+            } catch (IllegalAccessError e) {
+                return "Insufficient funds!";
             }
-            System.out.println("Select currency: 1. Dollars, 2. Credits, 3. CANCEL");
-            String choice = pickPlayerArgs(1, 3);
-            if (choice.equals("3")) {
-                System.out.println("Returning to menu");
-                return;
-            }
-            System.out.println("Pick Upgrade Level between current rank: " + player.getRank() + " and 6.");
-            Integer upgradeLevel = Integer.parseInt(pickPlayerArgs(player.getRank(), 6));
-            if (choice.equals("1")) {
-                castingOffice.dollarUpgradePlayer(player, upgradeLevel);
-            } else {
-                castingOffice.creditUpgradePlayer(player, upgradeLevel);
-            }
-        } else {
-            System.out.println("Player is not at Casting Office and Cannot Upgrade.");
         }
-    }
-
     // Assuming its a players turn and they can only pick between int1 to int2
     // Returns a string
     // public String pickPlayerArgs(Integer int1, Integer int2) {
