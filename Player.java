@@ -1,9 +1,7 @@
 import java.util.*;
 
 /*
-*
-*
-*
+* Player class, Mainly keeps track of player location and what they have done on each turn
 */
 public class Player {
     private String name;
@@ -48,9 +46,12 @@ public class Player {
     public int getRehearsalChips() {
         return rehearsalChips;
     }
-    public void addRehearsalChips(Integer add){
+
+    public void addRehearsalChips(Integer add) {
         this.rehearsalChips = this.rehearsalChips + add;
     }
+
+    // NEeds to be moved
     public void Identify() {
         System.out.println("Player Id: " + getPlayerID());
         System.out.println("Player Name: " + getName());
@@ -59,7 +60,7 @@ public class Player {
         System.out.println("Credits: " + getCredits());
         System.out.println("Score: " + getScore());
     }
-
+    // needs to be moved
     // Get and Set Player Name from user input
     public void inputPlayerName(Scanner scanner, int playerID) {
         System.out.println("Input Player: " + playerID + "Name");
@@ -68,20 +69,23 @@ public class Player {
     }
 
     public void rehearse() {
-    this.rehearsalChips++;
-    this.hasActed = true;
-    System.out.println(name + " now has " + rehearsalChips + " rehearsal chips.");
-}
+        this.rehearsalChips++;
+        this.hasActed = true;
+    }
+
     // Calculate Player Score
     public void calculateScore() {
         this.score = this.getDollars() + this.getCredits() + (5 * this.getRank());
     }
-    public void addCredits(Integer credits){
+
+    public void addCredits(Integer credits) {
         this.credits = this.credits + credits;
     }
-    public void addDollars(Integer dollars){
+
+    public void addDollars(Integer dollars) {
         this.dollars = this.dollars + dollars;
     }
+
     // getters
     public int getScore() {
         calculateScore();
@@ -108,7 +112,7 @@ public class Player {
         return dollars;
     }
 
-    public Part getPart(){
+    public Part getPart() {
         return part;
     }
 
@@ -128,6 +132,7 @@ public class Player {
     public void setWorkingRole(boolean working) {
         this.workingPart = working;
     }
+
     public void setLocation(Set location) {
         this.location = location;
     }

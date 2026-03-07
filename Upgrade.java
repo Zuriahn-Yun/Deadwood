@@ -1,7 +1,7 @@
 import java.util.HashMap;
 
 /*
-*
+* To hold upgrade objects from xml
 */
 public class Upgrade {
     private Integer level;

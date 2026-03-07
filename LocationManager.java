@@ -1,7 +1,7 @@
 import java.util.*;
 
 /*
-*
+* This controlles/keeps track of all players and where they currently are , needs to be refactored for mvc 
 *
 */
 public class LocationManager {

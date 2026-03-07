@@ -1,7 +1,7 @@
 import java.util.*;
 
 /**
- * 
+ *  This is a class designed to take in user input, currently only for terminal view.
  */
 public class UserInput{
     Scanner scanner = new Scanner(System.in);

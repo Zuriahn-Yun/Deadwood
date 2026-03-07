@@ -2,7 +2,6 @@ import java.util.*;
 
 /**
  * The Set Class manages the set cards that will be pulled from cards.xml.
- * 
  */
 public class Set {
     private String name;

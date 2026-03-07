@@ -1,7 +1,6 @@
 import java.util.*;
-
 /*
-* Casting Office Class. In Charge of Player upgrades with credit or dollars. When do Players interact with the casting office? 
+* Casting Office Class. In Charge of Player upgrades with credit or dollars.
 * 
 */
 public class CastingOffice {
@@ -21,25 +20,24 @@ public class CastingOffice {
             5, 20,
             6, 25);
 
-    // Method to Upgrade Player Object to an arbitrary level when paying with
-    // dollars
-    public void dollarUpgradePlayer(Player player, int level) {
-        if (player.getDollars() < dollarUpgradeMap.get(level)) {
-            throw new IllegalAccessError("Player Does Not Have Enough Dollars");
-        } else {
-            player.setDollars(player.getDollars() - dollarUpgradeMap.get(level));
-            System.out.println("Player is now upgraded to Level: " + level);
+    // Check if player can afford the payment and return a boolean
+    public boolean canAfford(Player player, int target, String currency){
+        if(currency.toLowerCase().equals("dollar")){
+            return dollarUpgradeMap.get(target) <= player.getDollars();
+        }else{
+            return creditUpgradeMap.get(target) <= player.getCredits();
         }
     }
 
-    // Method to Upgrade Player Object to an arbitrary level when paying with
-    // credits
-    public void creditUpgradePlayer(Player player, int level) {
-        if (player.getCredits() < creditUpgradeMap.get(level)) {
-            throw new IllegalAccessError("Player Does Not Have Enough Credits");
-        } else {
-            player.setCredits(player.getCredits() - creditUpgradeMap.get(level));
-            System.out.println("Player is now upgraded to Level: " + level);
+    // This will be used to have the player pay and upgrade their rank 
+    public void pay(Player player, int target, String currency){
+        if(currency.toLowerCase().equals("dollar")){
+            player.setDollars(player.getDollars() - dollarUpgradeMap.get(target));
+            player.setRank(target);
+        }else{
+            player.setCredits((player.getDollars() - dollarUpgradeMap.get(target)));
+            player.setRank(target);
         }
     }
+
 }
