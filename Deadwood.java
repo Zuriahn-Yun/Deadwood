@@ -8,8 +8,9 @@ public class Deadwood {
             // Initialize our Model 
             GameManager model = new GameManager();
 
+            View.guiView view = new View.guiView();
             // Pick a view
-            GameView view = new View.terminalView();
+            // GameView view = new View.terminalView();
             // GameView view = new View.GuiView();
 
             // Create Controller

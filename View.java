@@ -1,4 +1,3 @@
-import java.util.*;
 
 /**
  * This File is our View, Game View depicts all the functions

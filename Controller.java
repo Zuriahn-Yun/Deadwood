@@ -1,20 +1,22 @@
-import java.util.ArrayList;
+// import java.util.ArrayList;
+// import java.util.List;
+
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
+import java.awt.Point;
 
 public class Controller {
     // will contain reference to view and to Game Manager
-    // The controller talks to the Model(Game Mangers) view reflects whats happening
-    // in the model
-    // this will interact with the user -> model -> return to controller -> deliver
-    // to view
-    GameManager model; 
-    GameView view; 
-    UserInput userInput; 
-
-    public Controller(GameManager gameManager, GameView view) {
+    // The controller talks to the Model(Game Mangers) view reflects whats happening in the model
+    // this will interact with the user -> model -> return to controller -> deliver to view
+    GameManager model; // this is our model
+    GameView view; // view
+    UserInput userInput; // this is how we manage commands and grab user input
+    public Controller(GameManager gameManager,GameView view) {
         this.model = gameManager;
         this.view = view;
-        this.userInput = new UserInput();
+        setupMouseListeners();
     }
 
 
@@ -119,22 +121,22 @@ public class Controller {
 
         }
     }
-
-    public String pickPlayerArgs(Integer int1, Integer int2) throws Exception{
+public String pickPlayerArgs(Integer int1, Integer int2) {
         while (true) {
+            try {
                 String input = userInput.getInput();
                 int choice = Integer.parseInt(input);
 
                 if (choice >= int1 && choice <= int2) {
                     return String.valueOf(choice);
                 } else {
-                    view.displayMessage("Invalid choice. Please pick a number between " + int1 + " and " + int2 + ".");
+                    view.display("Invalid choice. Please pick a number between " + int1 + " and " + int2 + ".");
                 }
-            } 
+            } catch (Exception e) {
+                view.display("Please provide a valide Integer between " + int1 + " and " + int2);
+            }
         }
-
-
-        // this needs to be refactored
+    }
     public void handleChoice(Player player, String choice) {
         if (choice.equalsIgnoreCase("Move")) {
             model.moveManager.move(player, userInput);
@@ -150,39 +152,41 @@ public class Controller {
         } else if (choice.equalsIgnoreCase("End Turn")) {
             player.current_Player = false;
         } else {
-            view.displayMessage("Not a valid Action.");
+            view.display("Not a valid Action.");
         }
     }
-
-    public void startGame() throws Exception {
-        view.displayMessage("Starting Game");
+    public void startGame(){
+        view.display("Starting Game");
+        try {
             initializeNumberOfPlayers();
             LocationManager locationManager = new LocationManager(model.getPlayers());
             model.setLocationManager(locationManager);
-            // now what happens a while loop and player turns and things
+            // now what happens a while loop and player turns and things 
             // game over returns true if the curr day is equal to max days
             for (int i = 1; i < model.getTotalDays() + 1; i++) {
                 model.newDay();
                 while (model.board.getRemainingScenes() > 1) {
 
-                    for (Player player : model.getPlayers()) {
-                        // Check if a previous player's action ended the day early
-                        if (model.board.getRemainingScenes() <= 1) {
-                            break;
-                        }
+//                     for (Player player : model.getPlayers()) {
+//                         // Check if a previous player's action ended the day early
+//                         if (model.board.getRemainingScenes() <= 1) {
+//                             break;
+//                         }
 
-                        view.displayMessage(
-                                "\nDay " + model.currDay + " - Remaining Scenes: " + model.board.getRemainingScenes());
-                        view.displayMessage("Turn: " + player.getName());
+                        view.display("\nDay " + model.currDay + " - Remaining Scenes: " + model.board.getRemainingScenes());
+                        view.display("Turn: " + player.getName());
 
-                        model.locationManager.setActivePlayer(player.getPlayerID());
-                        playerTurn(player);
-                    }
-                }
-                System.out.println("End of Day " + model.currDay);
+//                         model.locationManager.setActivePlayer(player.getPlayerID());
+//                         playerTurn(player);
+//                     }
+//                 }
+//                 System.out.println("End of Day " + model.currDay);
 
             }
-            // Game is complete, needs to be refactored and changed
+            // Game is complete
             model.getWinners();
-        } 
+        } catch (Exception e) {
+            System.out.println("Error: " + e);
+        }
+    }
 }

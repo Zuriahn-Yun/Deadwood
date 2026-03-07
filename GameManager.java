@@ -241,22 +241,81 @@ public class GameManager {
         }
         // Sort descending by score
         players.sort((p1, p2) -> Integer.compare(p2.getScore(), p1.getScore()));
-        return players;
+        for (int i = 0; i < players.size(); i++) {
+            res.append("Place Number: ").append((i + 1));
+            res.append(players.get(i).getName()).append(":").append(players.get(i).getScore()).append(" points.");
+        }
+        return res.toString();
     }
 
-    // currency type is a string expected to be "dollar" or "credit" upper or lower
-    // doesnt matter
-    public boolean upgrade(Player player, int targetRank, String currencyType) {
-        if (!player.isAtCastingOffice || targetRank < player.getRank()) {
-            return false;
-        }
-        if (castingOffice.canAfford(player, targetRank, currencyType)) {
-            castingOffice.pay(player, targetRank, currencyType);
-            player.setRank(targetRank);
-            return true;
-        }
-        return false;
+    // What does this do? returns an empy array list??
+    public ArrayList<String> getPlayerOptions(){
+        ArrayList<String> res = new ArrayList<>();
+        
+        return res;
     }
+
+    public String processUpgrade(Player player, int level, int currencyType) {
+    // currencyType: 1 for Dollars, 2 for Credits
+    if (!player.isAtCastingOffice) {
+        return "You must be at the Casting Office to upgrade!";
+    }
+
+    boolean success;
+    if (currencyType == 1) {
+        success = castingOffice.dollarUpgradePlayer(player, level);
+    } else {
+        success = castingOffice.creditUpgradePlayer(player, level);
+    }
+
+    return success ? 
+        "Success! You are now Rank " + level : 
+        "Upgrade failed. Insufficient funds.";
+}
+
+    // Upgrade a player backend logic
+    public void upgradePlayer(Player player, CastingOffice castingOffice) {
+        if (player.isAtCastingOffice) {
+            for (int i = 2; i < 7; i++) {
+                System.out.println("Level: " + i + "Cost in Dollars: " + castingOffice.dollarUpgradeMap.get(i)
+                        + " Cost in Credits: " + castingOffice.creditUpgradeMap.get(i));
+            }
+            System.out.println("Select currency: 1. Dollars, 2. Credits, 3. CANCEL");
+            String choice = pickPlayerArgs(1, 3);
+            if (choice.equals("3")) {
+                System.out.println("Returning to menu");
+                return;
+            }
+            System.out.println("Pick Upgrade Level between current rank: " + player.getRank() + " and 6.");
+            Integer upgradeLevel = Integer.parseInt(pickPlayerArgs(player.getRank(), 6));
+            if (choice.equals("1")) {
+                castingOffice.dollarUpgradePlayer(player, upgradeLevel);
+            } else {
+                castingOffice.creditUpgradePlayer(player, upgradeLevel);
+            }
+        } else {
+            System.out.println("Player is not at Casting Office and Cannot Upgrade.");
+        }
+    }
+
+    // Assuming its a players turn and they can only pick between int1 to int2
+    // Returns a string
+    // public String pickPlayerArgs(Integer int1, Integer int2) {
+    //     while (true) {
+    //         try {
+    //             String input = userInput.getInput();
+    //             int choice = Integer.parseInt(input);
+
+    //             if (choice >= int1 && choice <= int2) {
+    //                 return String.valueOf(choice);
+    //             } else {
+    //                 System.out.println("Invalid choice. Please pick a number between " + int1 + " and " + int2 + ".");
+    //             }
+    //         } catch (Exception e) {
+    //             System.out.println("Please provide a valide Integer between " + int1 + " and " + int2);
+    //         }
+    //     }
+    // }
 
     // Getters
     public List<Player> getPlayers() {
