@@ -32,14 +32,14 @@ public class Board {
         // Trailer
         Node trailerNode = document.getElementsByTagName("trailer").item(0);
         Element trailElement = (Element) trailerNode;
-        Set trailer = new Set("trailer", getNeighbors(trailElement));
+        Set trailer = new Set("Trailer", getNeighbors(trailElement));
         trailer.setArea(getArea(trailElement));
         setTrailer(trailer);
 
         // Office
         Node officeNode = document.getElementsByTagName("office").item(0);
         Element officeElement = (Element) officeNode;
-        Set officeSet = new Set("office", getNeighbors(officeElement));
+        Set officeSet = new Set("Casting Office", getNeighbors(officeElement));
         officeSet.setArea(getArea(officeElement));
         // Setting Office
         setOffice(new Office(officeSet, getUpgrades(officeElement)));
@@ -124,7 +124,7 @@ public class Board {
                 // Parse Parts and add to partObj
                 partObj.setName(partElement.getAttribute("name"));
                 partObj.setLevel(Integer.parseInt(partElement.getAttribute("level")));
-                partObj.setArea(getArea(partsElement));
+                partObj.setArea(getArea(partElement));
                 partObj.setLine(partElement.getAttribute("line"));
                 parts.add(partObj);
             }
@@ -193,6 +193,15 @@ public class Board {
         }
         return neighborsList;
 
+    }
+
+    public ArrayList<Set> getAllSets() {
+        ArrayList<Set> allSets = new ArrayList<>(sets);
+        allSets.add(trailer);
+        if (office != null) {
+            allSets.add(office.getSet());
+        }
+        return allSets;
     }
 
     public ArrayList<Set> getSets() {

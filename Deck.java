@@ -27,6 +27,7 @@ public class Deck {
             // Extract attributes for the Scenes constructor
             String cardName = cardElem.getAttribute("name");
             int budget = Integer.parseInt(cardElem.getAttribute("budget"));
+            String img = cardElem.getAttribute("img");
 
             // Dig into the <scene> tag for number and description
             Element sceneElem = (Element) cardElem.getElementsByTagName("scene").item(0);
@@ -34,7 +35,7 @@ public class Deck {
             String desc = sceneElem.getTextContent().trim();
 
             // Create the Scenes object
-            Scene sceneCard = new Scene(cardName, sceneNum, budget, desc);
+            Scene sceneCard = new Scene(cardName, sceneNum, budget, desc, img);
 
             // Parse the <part> tags (starring roles) for this specific card
             NodeList partNodes = cardElem.getElementsByTagName("part");

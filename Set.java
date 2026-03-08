@@ -31,26 +31,24 @@ public class Set {
     public void setCurrentScene(Scene currentScene) {
         this.currentScene = currentScene;
         if (this.currentScene != null) {
-            // false for new day
-            this.currentScene.setFlipped(false);
+            // true for new day (user requested all cards start face-up)
+            this.currentScene.setFlipped(true);
         }
     }
 
     public Scene removeTake() {
         if (remainingTakes > 0) {
             remainingTakes--;
-            System.out.println("Shot completed! Remaining takes: " + remainingTakes);
 
             if (remainingTakes == 0) {
                 return wrapScene();
             }
-            
+
         }
         return null;
     }
 
     private Scene wrapScene() {
-        System.out.println("Scene " + currentScene.getSceneName() + " is finished.");
         Scene wrappedScene = this.currentScene;
         this.currentScene = null;
         return wrappedScene;

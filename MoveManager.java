@@ -1,7 +1,8 @@
 import java.util.*;
 
 /**
- * This is our move manager, it will handle any location changes
+ * This is our move manager, it will handle any location changes and provide
+ * neighbors
  */
 public class MoveManager {
     private List<Set> sets;
@@ -10,12 +11,12 @@ public class MoveManager {
         this.sets = sets;
     }
 
-    // Step 1: Model provides the data (The "What")
+    //
     public List<String> getNeighborNames(Player player) {
         return player.getLocation().getNeighbors();
     }
 
-    // Step 2: Model executes the change (The "Action")
+    //
     public boolean executeMove(Player player, String destinationName) {
         Optional<Set> destination = getDestination(destinationName);
         if (destination.isPresent()) {
@@ -25,9 +26,13 @@ public class MoveManager {
         return false;
     }
 
+    // get destination if it exists otherwise return an empty optional
     private Optional<Set> getDestination(String destinationName) {
-        return this.sets.stream()
-                   .filter(s -> s.getName().equalsIgnoreCase(destinationName))
-                   .findFirst();
+        for (Set s : this.sets) {
+            if (s.getName().equalsIgnoreCase(destinationName)) {
+                return Optional.of(s);
+            }
+        }
+        return Optional.empty();
     }
 }

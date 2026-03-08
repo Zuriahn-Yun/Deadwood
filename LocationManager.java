@@ -12,35 +12,37 @@ public class LocationManager {
     public LocationManager(List<Player> players) {
         this.players = players;
     }
-    
-    public List<Player> getPlayersAtLocation(Set currSet){
+
+    public List<Player> getPlayersAtLocation(Set currSet) {
         ArrayList<Player> res = new ArrayList<>();
-        for(Player player: players){
-            if(player.getLocation() == currSet){
+        for (Player player : players) {
+            if (player.getLocation() == currSet) {
                 res.add(player);
             }
         }
         return res;
     }
-    // Display the Location of all players and indicate the active player
-    public void displayLocation() {
+
+    // Return the Location of all players as strings
+    public List<String> getLocationStrings() {
+        List<String> locationStrings = new ArrayList<>();
         if (activePlayer != null) {
             for (Player player : players) {
                 if (player.getPlayerID() == activePlayerId) {
-                    System.out.println(
+                    locationStrings.add(
                             "Active Player " + player.getPlayerID() + "  Location:  " + player.getLocation().getName());
                 } else {
-                    System.out
-                            .println("Player " + player.getPlayerID() + " Location: " + player.getLocation().getName());
+                    locationStrings.add(
+                            "Player " + player.getPlayerID() + " Location: " + player.getLocation().getName());
                 }
             }
         } else {
             for (Player player : players) {
-                System.out.println("Player " + player.getPlayerID() + " Location: " + player.getLocation().getName());
+                locationStrings.add("Player " + player.getPlayerID() + " Location: " + player.getLocation().getName());
             }
 
         }
-
+        return locationStrings;
     }
 
     public Player getActivePlayer() {

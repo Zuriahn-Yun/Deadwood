@@ -1,4 +1,3 @@
-import java.util.*;
 
 /*
 * Player class, Mainly keeps track of player location and what they have done on each turn
@@ -11,6 +10,8 @@ public class Player {
     private int credits = 0;
     private Part part;
     private Set location;
+
+    private String color = "b";
     private int score = 0;
     private int rehearsalChips = 0;
     private boolean isStarringRole = false;
@@ -31,7 +32,7 @@ public class Player {
         this.hasUpgraded = false;
         this.hasActed = false;
         this.hasRehearsed = false;
-
+        this.canTakePart = false;
     }
 
     public void setPart(Part part) {
@@ -49,23 +50,6 @@ public class Player {
 
     public void addRehearsalChips(Integer add) {
         this.rehearsalChips = this.rehearsalChips + add;
-    }
-
-    // NEeds to be moved
-    public void Identify() {
-        System.out.println("Player Id: " + getPlayerID());
-        System.out.println("Player Name: " + getName());
-        System.out.println("Rank: " + getRank());
-        System.out.println("Dollars: " + getDollars());
-        System.out.println("Credits: " + getCredits());
-        System.out.println("Score: " + getScore());
-    }
-    // needs to be moved
-    // Get and Set Player Name from user input
-    public void inputPlayerName(Scanner scanner, int playerID) {
-        System.out.println("Input Player: " + playerID + "Name");
-        name = scanner.nextLine();
-        setName(name);
     }
 
     public void rehearse() {
@@ -151,6 +135,14 @@ public class Player {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
     }
 
     public void setRank(int rank) {
