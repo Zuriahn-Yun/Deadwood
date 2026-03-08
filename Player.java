@@ -11,6 +11,8 @@ public class Player {
     private Part part;
     private Set location;
 
+
+    // Addding color for the player dice in the GUI
     private String color = "b";
     private int score = 0;
     private int rehearsalChips = 0;
