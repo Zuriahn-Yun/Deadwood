@@ -1,48 +1,53 @@
 // import java.util.ArrayList;
 // import java.util.List;
 
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.List;
-import java.awt.Point;
+import java.util.*;
 
 public class Controller {
     // will contain reference to view and to Game Manager
-    // The controller talks to the Model(Game Mangers) view reflects whats happening in the model
-    // this will interact with the user -> model -> return to controller -> deliver to view
+    // The controller talks to the Model(Game Mangers) view reflects whats happening
+    // in the model
+    // this will interact with the user -> model -> return to controller -> deliver
+    // to view
     GameManager model; // this is our model
     GameView view; // view
     UserInput userInput; // this is how we manage commands and grab user input
-    public Controller(GameManager gameManager,GameView view) {
+
+    public Controller(GameManager gameManager, GameView view) {
         this.model = gameManager;
         this.view = view;
-        setupMouseListeners();
+        this.userInput = new UserInput();
     }
 
-
     public void handleMove(Player player) {
-        // Ask Model for valid neighbors
+        // get neightbors from our model
         List<String> neighbors = model.moveManager.getNeighborNames(player);
-
-        // broken
-        String selectedDestination = view.displayMessage(neighbors);
-
+        // Pass the to the view to show the neightbors
+        String selectedDestination = view.requestMoveDestination(neighbors);
+        // if we have none
         if (selectedDestination != null) {
-        
             boolean success = model.moveManager.executeMove(player, selectedDestination);
-
+            // otherwise 
             if (success) {
+                // change player args
                 player.hasMoved = true;
+                // check if we are at the casting office 
+                player.isAtCastingOffice = selectedDestination.equalsIgnoreCase("office");
+                // update in our view and display where we moved
+                view.updatePlayerLocation(player);
                 view.displayMessage("Successfully moved to " + selectedDestination);
             }
         }
     }
 
     // We need to do this to start the game
-    public void initializeNumberOfPlayers() throws Exception{
+    public void initializeNumberOfPlayers() throws Exception {
         while (true) {
-            view.displayMessage("Please Enter Number of Players:");
-            String input = userInput.getInput();
+            String input = view.requestInput("Please Enter Number of Players (2-8):");
+            // loop
+            if (input == null || input.isEmpty())
+                continue;
+            try {
                 int num = Integer.parseInt(input);
                 if (num >= 2 && num <= 8) {
                     // Pass info to the Game Manager
@@ -52,7 +57,10 @@ public class Controller {
                     initializePlayers();
                     return;
                 }
-                view.displayMessage("Invalid range! Please enter 2-8 players.");
+            } catch (NumberFormatException e) {
+                // Ignore and loop
+            }
+            view.displayMessage("Invalid range! Please enter 2-8 players.");
         }
     }
 
@@ -61,8 +69,9 @@ public class Controller {
         for (int i = 0; i < model.getNumberOfPlayers(); i++) {
             // Create a player Object
             Player player = new Player(model.board.getTrailer());
-            System.out.println("Get Player Name: ");
-            String name = userInput.getInput();
+            String name = view.requestInput("Enter Name for Player " + (i + 1) + ":");
+            if (name == null || name.isEmpty())
+                name = "Player " + (i + 1);
             player.setName(name);
             // Add to Player List
             model.players.add(player);
@@ -75,26 +84,36 @@ public class Controller {
             orderedPlayers.add(model.players.get(index - 1));
         }
         model.players = orderedPlayers;
+        // passing colors for the dice
+        String[] colors = { "b", "c", "g", "o", "p", "r", "v", "y" };
         int i = 1;
+        // setting player ids, we never used these 
         for (Player player : model.players) {
             player.setPlayerID(i);
+            player.setColor(colors[i - 1]);
             view.displayMessage("Player " + i + ": " + player.getname());
             i += 1;
         }
-
+        // add players into view
+        view.initPlayers(model.players);
+        view.updatePlayerStats(model.players.get(0));
     }
 
+    // turn logic
     public void playerTurn(Player player) {
         player.current_Player = true;
+        // reset flags so we know what the player has done so far
         player.resetFlags();
+        view.updatePlayerStats(player);
         while (player.current_Player) {
+            // get what we can do 
             List<String> availableActions = new ArrayList<>();
             // Decide the options the player has on this turn
             if (player.getWorkingRole()) {
                 if (!player.hasActed) {
                     availableActions.add("Act");
                     int budget = (player.getLocation()).getCurrentScene().getBudget();
-                    // Check if the succeess is not guaranteed
+                    // check if the succeess is not guaranteed
                     if (1 + player.getRehearsalChips() < budget) {
                         availableActions.add("Rehearse");
                     } else {
@@ -110,81 +129,96 @@ public class Controller {
                     availableActions.add("Take Role");
             }
             availableActions.add("End Turn");
-            // List Avaiblible actions
-            for (int i = 1; i < availableActions.size() + 1; i++) {
-                view.displayMessage("Press " + i + " for action " + availableActions.get(i - 1));
-            }
-            String choice = pickPlayerArgs(1, availableActions.size());
-            int index = Integer.parseInt(choice) - 1;
-            String action = availableActions.get(index);
-            handleChoice(player, action);
+            // Highlight available actions
+            view.displayMessage("Available Actions: " + String.join(", ", availableActions));
 
-        }
-    }
-public String pickPlayerArgs(Integer int1, Integer int2) {
-        while (true) {
-            try {
-                String input = userInput.getInput();
-                int choice = Integer.parseInt(input);
-
-                if (choice >= int1 && choice <= int2) {
-                    return String.valueOf(choice);
-                } else {
-                    view.display("Invalid choice. Please pick a number between " + int1 + " and " + int2 + ".");
-                }
-            } catch (Exception e) {
-                view.display("Please provide a valide Integer between " + int1 + " and " + int2);
+            String action = view.waitForAction();
+            if (availableActions.contains(action)) {
+                handleChoice(player, action);
+            } else {
+                view.displayMessage("That action is not currently available for you.");
             }
         }
     }
+
+    // let the player pick an action
     public void handleChoice(Player player, String choice) {
         if (choice.equalsIgnoreCase("Move")) {
-            model.moveManager.move(player, userInput);
-            player.hasMoved = true;
+            handleMove(player);
+            // hasMoved is handled inside handleMove upon success
         } else if (choice.equalsIgnoreCase("Act")) {
             model.act(player);
         } else if (choice.equalsIgnoreCase("Rehearse")) {
             player.rehearse();
         } else if (choice.equalsIgnoreCase("Upgrade Rank")) {
-            model.upgradePlayer(player, model.castingOffice);
+            String currency = view.requestUpgradeCurrency();
+            if (!currency.equals("cancel")) {
+                int level = view.requestUpgradeLevel(player.getRank());
+                int currencyType = currency.equals("dollar") ? 1 : 2;
+                String resultMessage = model.processUpgrade(player, level, currencyType);
+                view.displayMessage(resultMessage);
+            }
         } else if (choice.equalsIgnoreCase("Take Role")) {
-            model.takeRole(player);
+            List<Part> availableParts = model.getAllAvailableParts(player);
+            String chosenPartName = view.requestRoleChoice(availableParts);
+            if (chosenPartName != null) {
+                Part chosenPart = null;
+                for (Part p : availableParts) {
+                    if (p.getName().equals(chosenPartName)) {
+                        chosenPart = p;
+                        break;
+                    }
+                }
+                boolean success = model.attemptTakeRole(player, chosenPart);
+                if (success) {
+                    view.displayMessage("Successfully took the role: " + chosenPartName);
+                } else {
+                    view.displayMessage("Failed to take role. Rank too low or already working.");
+                }
+            }
         } else if (choice.equalsIgnoreCase("End Turn")) {
             player.current_Player = false;
         } else {
-            view.display("Not a valid Action.");
+            view.displayMessage("Not a valid Action.");
         }
+
+        view.updatePlayerStats(player);
+        for (Player p : model.getPlayers()) {
+            view.updatePlayerLocation(p);
+        }
+        view.updateBoard(model.board.getSets());
     }
-    public void startGame(){
-        view.display("Starting Game");
+
+    public void startGame() {
+        view.displayMessage("Starting Game");
         try {
             initializeNumberOfPlayers();
             LocationManager locationManager = new LocationManager(model.getPlayers());
             model.setLocationManager(locationManager);
-            // now what happens a while loop and player turns and things 
-            // game over returns true if the curr day is equal to max days
+
+            // Day Loop
             for (int i = 1; i < model.getTotalDays() + 1; i++) {
                 model.newDay();
+                view.updateBoard(model.board.getSets());
                 while (model.board.getRemainingScenes() > 1) {
+                    for (Player player : model.getPlayers()) {
+                        // Check if a previous player's action ended the day early
+                        if (model.board.getRemainingScenes() <= 1) {
+                            break;
+                        }
 
-//                     for (Player player : model.getPlayers()) {
-//                         // Check if a previous player's action ended the day early
-//                         if (model.board.getRemainingScenes() <= 1) {
-//                             break;
-//                         }
+                        view.displayMessage(
+                                "\nDay " + model.currDay + " - Remaining Scenes: " + model.board.getRemainingScenes());
+                        view.displayMessage("Turn: " + player.getName());
 
-                        view.display("\nDay " + model.currDay + " - Remaining Scenes: " + model.board.getRemainingScenes());
-                        view.display("Turn: " + player.getName());
-
-//                         model.locationManager.setActivePlayer(player.getPlayerID());
-//                         playerTurn(player);
-//                     }
-//                 }
-//                 System.out.println("End of Day " + model.currDay);
-
+                        model.locationManager.setActivePlayer(player.getPlayerID());
+                        playerTurn(player);
+                    }
+                }
+                view.displayMessage("End of Day " + model.currDay);
             }
             // Game is complete
-            model.getWinners();
+            view.displayMessage(model.calculateWinners());
         } catch (Exception e) {
             System.out.println("Error: " + e);
         }
