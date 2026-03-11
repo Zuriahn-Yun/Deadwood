@@ -274,7 +274,7 @@ public class View {
 
             playerLabel = new JLabel("Current Player: ");
             playerLabel.setFont(new Font("Western", Font.BOLD, 14));
-            playerLabel.setBounds(uiX, 40, 400, 20);
+            playerLabel.setBounds(uiX, 35, 180, 80);
             boardPane.add(playerLabel, Integer.valueOf(2));
 
             // Action Buttons
@@ -284,7 +284,7 @@ public class View {
             // Move Button
             JButton bMove = new JButton("Move");
             bMove.setBackground(Color.white);
-            bMove.setBounds(uiX, 80, 120, 25);
+            bMove.setBounds(uiX, 120, 120, 25);
             bMove.addActionListener(e -> inputQueue.offer("Move"));
             boardPane.add(bMove, Integer.valueOf(2));
             actionButtons.put("Move", bMove);
@@ -292,7 +292,7 @@ public class View {
             // Act Button
             JButton bAct = new JButton("Act");
             bAct.setBackground(Color.white);
-            bAct.setBounds(uiX, 115, 120, 25);
+            bAct.setBounds(uiX, 155, 120, 25);
             bAct.addActionListener(e -> inputQueue.offer("Act"));
             boardPane.add(bAct, Integer.valueOf(2));
             actionButtons.put("Act", bAct);
@@ -300,7 +300,7 @@ public class View {
             // Rehearse Button
             JButton bRehearse = new JButton("Rehearse");
             bRehearse.setBackground(Color.white);
-            bRehearse.setBounds(uiX, 150, 120, 25);
+            bRehearse.setBounds(uiX, 190, 120, 25);
             bRehearse.addActionListener(e -> inputQueue.offer("Rehearse"));
             boardPane.add(bRehearse, Integer.valueOf(2));
             actionButtons.put("Rehearse", bRehearse);
@@ -308,7 +308,7 @@ public class View {
             // Take Role Button
             JButton bTakeRole = new JButton("Take Role");
             bTakeRole.setBackground(Color.white);
-            bTakeRole.setBounds(uiX, 185, 120, 25);
+            bTakeRole.setBounds(uiX, 225, 120, 25);
             bTakeRole.addActionListener(e -> inputQueue.offer("Take Role"));
             boardPane.add(bTakeRole, Integer.valueOf(2));
             actionButtons.put("Take Role", bTakeRole);
@@ -316,7 +316,7 @@ public class View {
             // Upgrade Rank Button
             JButton bUpgradeRank = new JButton("Upgrade Rank");
             bUpgradeRank.setBackground(Color.white);
-            bUpgradeRank.setBounds(uiX, 220, 120, 25);
+            bUpgradeRank.setBounds(uiX, 260, 120, 25);
             bUpgradeRank.addActionListener(e -> inputQueue.offer("Upgrade Rank"));
             boardPane.add(bUpgradeRank, Integer.valueOf(2));
             actionButtons.put("Upgrade Rank", bUpgradeRank);
@@ -324,7 +324,7 @@ public class View {
             // End Turn Button
             JButton bEndTurn = new JButton("End Turn");
             bEndTurn.setBackground(Color.white);
-            bEndTurn.setBounds(uiX, 255, 120, 25);
+            bEndTurn.setBounds(uiX, 295, 120, 25);
             bEndTurn.addActionListener(e -> inputQueue.offer("End Turn"));
             boardPane.add(bEndTurn, Integer.valueOf(2));
             actionButtons.put("End Turn", bEndTurn);
@@ -342,7 +342,7 @@ public class View {
 
             // scrollable text bounds
             JScrollPane scrollPane = new JScrollPane(logArea);
-            scrollPane.setBounds(uiX, 290, 220, 400);
+            scrollPane.setBounds(uiX, 330, 220, 400);
             boardPane.add(scrollPane, Integer.valueOf(2));
 
             setLocationRelativeTo(null); // Center window
@@ -360,16 +360,11 @@ public class View {
         @Override
         public void updatePlayerStats(Player player) {
             SwingUtilities.invokeLater(() -> {
-                playerLabel.setText("Current Player: " + player.getname() +
-                        " ($" + player.getDollars() + ", C"
-                        + player.getCredits()
-                        + ", Rank " +
-                        player.getRank() +
-                        ", Rehearsal " +
-                        player.getRehearsalChips() +
-                        ", Score " +
-                        player.getScore()
-                        + ")");
+                // switching to html otherwiser it wont fit on page
+                playerLabel.setText("<html>Current Player: " + player.getname() +
+                        "<br>$" + player.getDollars() + ", C" + player.getCredits() +
+                        "<br>Rank " + player.getRank() + ", Rehearsal " + player.getRehearsalChips() +
+                        "<br>Score " + player.getScore() + "</html>");
                 // ensure the player is in the correct location
                 // this is bugged either here or in the card locations, when players take on
                 // card roles
