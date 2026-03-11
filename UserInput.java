@@ -3,6 +3,7 @@ import java.util.*;
 /**
  * This is a class designed to take in user input, currently only for terminal
  * view.
+ * This could be converted to a singleton class to ensure there is only one scanner? If not this is redundant
  */
 public class UserInput {
     // Singleton scanner to prevent multiple System.in streams closing each other

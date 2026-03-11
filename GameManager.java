@@ -169,7 +169,7 @@ public class GameManager {
             player.addRehearsalChips(-player.getRehearsalChips());
         }
 
-        // return data
+        // return scene wrap data 
         return new SceneWrapResult(currScene.getSceneName(), currSet.getName(), payouts, bonusGiven);
     }
 
