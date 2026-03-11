@@ -39,7 +39,7 @@ public class Board {
         // Office
         Node officeNode = document.getElementsByTagName("office").item(0);
         Element officeElement = (Element) officeNode;
-        Set officeSet = new Set("Casting Office", getNeighbors(officeElement));
+        Set officeSet = new Set("office", getNeighbors(officeElement));
         officeSet.setArea(getArea(officeElement));
         // Setting Office
         setOffice(new Office(officeSet, getUpgrades(officeElement)));

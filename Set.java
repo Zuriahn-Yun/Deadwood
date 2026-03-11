@@ -31,19 +31,17 @@ public class Set {
     public void setCurrentScene(Scene currentScene) {
         this.currentScene = currentScene;
         if (this.currentScene != null) {
-            // true for new day (user requested all cards start face-up)
-            this.currentScene.setFlipped(true);
+            // false so cards are facedown until someone enters
+            this.currentScene.setFlipped(false);
         }
     }
 
     public Scene removeTake() {
         if (remainingTakes > 0) {
             remainingTakes--;
-
-            if (remainingTakes == 0) {
-                return wrapScene();
-            }
-
+        }
+        if (remainingTakes == 0) {
+            return wrapScene();
         }
         return null;
     }

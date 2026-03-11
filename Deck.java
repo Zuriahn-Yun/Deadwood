@@ -47,6 +47,7 @@ public class Deck {
                 starringRole.setLevel(Integer.parseInt(partElem.getAttribute("level")));
                 starringRole.setLine(partElem.getElementsByTagName("line").item(0).getTextContent());
                 starringRole.setArea(getArea(partElem));
+                starringRole.setStarringRole(true);
 
                 // Add the fully formed part to the scene card
                 sceneCard.addPart(starringRole);

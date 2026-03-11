@@ -50,7 +50,7 @@ interface GameView {
     String requestInput(String prompt);
 
     // wait for a user to do something
-    String waitForAction();
+    String waitForAction(List<String> availableActions);
 
     // get what currency the user wants
     String requestUpgradeCurrency();
@@ -127,7 +127,7 @@ public class View {
 
         @Override
         // terminal version used to use User Input
-        public String waitForAction() {
+        public String waitForAction(List<String> availableActions) {
             return "";
         }
 
@@ -236,6 +236,8 @@ public class View {
         private java.util.Map<String, List<JLabel>> shotLabels = new java.util.HashMap<>();
         // card images
         private java.util.Map<String, JLabel> cardLabels = new java.util.HashMap<>();
+        // Action buttons tracking
+        private java.util.Map<String, JButton> actionButtons = new java.util.HashMap<>();
 
         // This queue links Swing button clicks back to the blocking Controller logic
         private BlockingQueue<String> inputQueue = new LinkedBlockingQueue<>();
@@ -275,7 +277,7 @@ public class View {
             playerLabel.setBounds(uiX, 40, 400, 20);
             boardPane.add(playerLabel, Integer.valueOf(2));
 
-            // Action Buttons  
+            // Action Buttons
 
             // MAKING BUTTONS Individually
 
@@ -285,6 +287,7 @@ public class View {
             bMove.setBounds(uiX, 80, 120, 25);
             bMove.addActionListener(e -> inputQueue.offer("Move"));
             boardPane.add(bMove, Integer.valueOf(2));
+            actionButtons.put("Move", bMove);
 
             // Act Button
             JButton bAct = new JButton("Act");
@@ -292,6 +295,7 @@ public class View {
             bAct.setBounds(uiX, 115, 120, 25);
             bAct.addActionListener(e -> inputQueue.offer("Act"));
             boardPane.add(bAct, Integer.valueOf(2));
+            actionButtons.put("Act", bAct);
 
             // Rehearse Button
             JButton bRehearse = new JButton("Rehearse");
@@ -299,6 +303,7 @@ public class View {
             bRehearse.setBounds(uiX, 150, 120, 25);
             bRehearse.addActionListener(e -> inputQueue.offer("Rehearse"));
             boardPane.add(bRehearse, Integer.valueOf(2));
+            actionButtons.put("Rehearse", bRehearse);
 
             // Take Role Button
             JButton bTakeRole = new JButton("Take Role");
@@ -306,6 +311,7 @@ public class View {
             bTakeRole.setBounds(uiX, 185, 120, 25);
             bTakeRole.addActionListener(e -> inputQueue.offer("Take Role"));
             boardPane.add(bTakeRole, Integer.valueOf(2));
+            actionButtons.put("Take Role", bTakeRole);
 
             // Upgrade Rank Button
             JButton bUpgradeRank = new JButton("Upgrade Rank");
@@ -313,6 +319,7 @@ public class View {
             bUpgradeRank.setBounds(uiX, 220, 120, 25);
             bUpgradeRank.addActionListener(e -> inputQueue.offer("Upgrade Rank"));
             boardPane.add(bUpgradeRank, Integer.valueOf(2));
+            actionButtons.put("Upgrade Rank", bUpgradeRank);
 
             // End Turn Button
             JButton bEndTurn = new JButton("End Turn");
@@ -320,6 +327,12 @@ public class View {
             bEndTurn.setBounds(uiX, 255, 120, 25);
             bEndTurn.addActionListener(e -> inputQueue.offer("End Turn"));
             boardPane.add(bEndTurn, Integer.valueOf(2));
+            actionButtons.put("End Turn", bEndTurn);
+
+            // disable all initially
+            for (JButton btn : actionButtons.values()) {
+                btn.setEnabled(false);
+            }
 
             // tetting up an area to display text
             logArea = new JTextArea();
@@ -372,10 +385,10 @@ public class View {
                 for (Player player : players) {
                     JLabel label = new JLabel();
                     playerLabels.put(player.getPlayerID(), label);
-                    boardPane.add(label, Integer.valueOf(3)); 
+                    boardPane.add(label, Integer.valueOf(3));
                 }
                 for (Player player : players) {
-                    //update location the update function might be bugged
+                    // update location the update function might be bugged
                     updatePlayerLocation(player);
                 }
             });
@@ -385,19 +398,19 @@ public class View {
         public void updateBoard(List<Set> sets) {
             SwingUtilities.invokeLater(() -> {
                 for (Set set : sets) {
-                    // update scene cards 
+                    // update scene cards
                     Scene currentScene = set.getCurrentScene();
                     JLabel cardLabel = cardLabels.get(set.getName());
 
-                    // not null 
+                    // not null
                     if (currentScene != null) {
                         if (cardLabel == null) {
                             cardLabel = new JLabel();
                             cardLabels.put(set.getName(), cardLabel);
-                            boardPane.add(cardLabel, Integer.valueOf(1)); 
+                            boardPane.add(cardLabel, Integer.valueOf(1));
                         }
 
-                        // this doesn towrk 
+                        // this doesn towrk
                         String imgName = currentScene.isFlipped() ? currentScene.getImg() : "Cardback.png";
                         // file path with gui folder
                         String imgPath = "gui/Card/" + imgName;
@@ -414,7 +427,7 @@ public class View {
                             } catch (Exception e) {
                             }
                         }
-                        // check this function 
+                        // check this function
                         cardLabel.setVisible(true);
                     } else {
                         if (cardLabel != null)
@@ -427,14 +440,14 @@ public class View {
                         setShots = new java.util.ArrayList<>();
                         shotLabels.put(set.getName(), setShots);
 
-                        // add takes to hashmap 
+                        // add takes to hashmap
                         java.util.HashMap<String, java.util.HashMap<String, String>> takes = set.getTakes();
                         for (int i = 1; i <= takes.size(); i++) {
                             JLabel shotLabel = new JLabel();
                             // grab shots
                             ImageIcon sIcon = new ImageIcon("gui/shot.png");
                             shotLabel.setIcon(sIcon);
-                            // add labels 
+                            // add labels
                             boardPane.add(shotLabel, Integer.valueOf(1));
 
                             java.util.HashMap<String, String> tArea = takes.get(String.valueOf(i));
@@ -448,7 +461,7 @@ public class View {
                                     // nothing
                                 }
                             }
-                            // add shots 
+                            // add shots
                             setShots.add(shotLabel);
                         }
                     }
@@ -457,7 +470,7 @@ public class View {
                     if (setShots != null) {
                         int remaining = set.getRemainingTakes();
                         for (int i = 0; i < setShots.size(); i++) {
-                            setShots.get(i).setVisible(i < remaining);
+                            setShots.get(i).setVisible(i >= remaining);
                         }
                     }
                 }
@@ -489,7 +502,7 @@ public class View {
             // figure out where the player should be
             java.util.HashMap<String, String> area;
 
-            if (player.getWorkingRole() == true) {
+            if (player.getWorkingRole() && player.getPart() != null) {
                 area = player.getPart().getArea();
             } else {
                 area = player.getLocation().getArea();
@@ -501,6 +514,13 @@ public class View {
                 int offset = (id - 1) * 20;
                 if (player.getWorkingRole() == true) {
                     offset = 0; // snap exact for roles
+                    if (player.getPart() != null && player.getPart().getStarringRole()) {
+                        JLabel cardLabel = cardLabels.get(player.getLocation().getName());
+                        if (cardLabel != null) {
+                            x += cardLabel.getX();
+                            y += cardLabel.getY();
+                        }
+                    }
                 }
                 label.setLocation(x + offset, y + offset);
             }
@@ -528,10 +548,21 @@ public class View {
         }
 
         @Override
-        public String waitForAction() {
-            // pauses the game unti a player clicks a button
+        public String waitForAction(List<String> availableActions) {
+            SwingUtilities.invokeLater(() -> {
+                for (String action : actionButtons.keySet()) {
+                    JButton btn = actionButtons.get(action);
+                    btn.setEnabled(availableActions != null && availableActions.contains(action));
+                }
+            });
+
             try {
                 String action = inputQueue.take();
+                SwingUtilities.invokeLater(() -> {
+                    for (JButton btn : actionButtons.values()) {
+                        btn.setEnabled(false);
+                    }
+                });
                 return action;
             } catch (Exception e) {
                 return "";

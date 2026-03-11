@@ -27,12 +27,16 @@ public class Controller {
         // if we have none
         if (selectedDestination != null) {
             boolean success = model.moveManager.executeMove(player, selectedDestination);
-            // otherwise 
+            // otherwise
             if (success) {
                 // change player args
                 player.hasMoved = true;
-                // check if we are at the casting office 
+                // check if we are at the casting office
                 player.isAtCastingOffice = selectedDestination.equalsIgnoreCase("office");
+                Set loc = player.getLocation();
+                if (loc != null && loc.getCurrentScene() != null) {
+                    loc.getCurrentScene().setFlipped(true);
+                }
                 // update in our view and display where we moved
                 view.updatePlayerLocation(player);
                 view.displayMessage("Successfully moved to " + selectedDestination);
@@ -87,7 +91,7 @@ public class Controller {
         // passing colors for the dice
         String[] colors = { "b", "c", "g", "o", "p", "r", "v", "y" };
         int i = 1;
-        // setting player ids, we never used these 
+        // setting player ids, we never used these
         for (Player player : model.players) {
             player.setPlayerID(i);
             player.setColor(colors[i - 1]);
@@ -106,18 +110,26 @@ public class Controller {
         player.resetFlags();
         view.updatePlayerStats(player);
         while (player.current_Player) {
-            // get what we can do 
+            // get what we can do
             List<String> availableActions = new ArrayList<>();
             // Decide the options the player has on this turn
             if (player.getWorkingRole()) {
                 if (!player.hasActed) {
-                    availableActions.add("Act");
-                    int budget = (player.getLocation()).getCurrentScene().getBudget();
-                    // check if the succeess is not guaranteed
-                    if (1 + player.getRehearsalChips() < budget) {
-                        availableActions.add("Rehearse");
+                    Scene currentScene = player.getLocation().getCurrentScene();
+                    if (currentScene != null) {
+                        availableActions.add("Act");
+                        int budget = currentScene.getBudget();
+                        // check if the succeess is not guaranteed
+                        if (1 + player.getRehearsalChips() < budget) {
+                            availableActions.add("Rehearse");
+                        } else {
+                            view.displayMessage("Success is guaranteed.Player must Act.");
+                        }
                     } else {
-                        view.displayMessage("Success is guaranteed.Player must Act.");
+                        // Scene wrapped, we might just be allowing them to unwork their role or move if
+                        // handled later, but role should be reset by GameManager
+                        player.setWorkingRole(false);
+                        availableActions.add("Move");
                     }
                 }
             } else {
@@ -125,14 +137,17 @@ public class Controller {
                     availableActions.add("Move");
                 if (player.isAtCastingOffice)
                     availableActions.add("Upgrade Rank");
-                if (!player.canTakePart)
+                if (!player.canTakePart && player.getLocation() != null
+                        && player.getLocation().getCurrentScene() != null
+                        && !player.getLocation().getName().equals("trailer")
+                        && !player.getLocation().getName().equals("office"))
                     availableActions.add("Take Role");
             }
             availableActions.add("End Turn");
             // Highlight available actions
             view.displayMessage("Available Actions: " + String.join(", ", availableActions));
 
-            String action = view.waitForAction();
+            String action = view.waitForAction(availableActions);
             if (availableActions.contains(action)) {
                 handleChoice(player, action);
             } else {
@@ -147,7 +162,13 @@ public class Controller {
             handleMove(player);
             // hasMoved is handled inside handleMove upon success
         } else if (choice.equalsIgnoreCase("Act")) {
-            model.act(player);
+            ActionResult res = model.act(player);
+            if (res.sceneWrapped) {
+                view.showSceneWrap(res.wrapResult);
+                // Allow them to move off the wrapped set
+                player.hasMoved = false;
+                player.hasActed = true; // Still can't act again
+            }
         } else if (choice.equalsIgnoreCase("Rehearse")) {
             player.rehearse();
         } else if (choice.equalsIgnoreCase("Upgrade Rank")) {
