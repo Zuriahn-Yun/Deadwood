@@ -64,6 +64,9 @@ interface GameView {
 
     // get where they want to move
     String requestMoveDestination(List<String> neighbors);
+
+    // update the day display
+    void updateDay(int day);
 }
 
 public class View {
@@ -211,6 +214,11 @@ public class View {
             }
             // return the part name
             return availableParts.get(choice - 1).getName();
+        }
+
+        @Override
+        public void updateDay(int day) {
+            // unnecessary for terminal
         }
     }
 
@@ -669,6 +677,15 @@ public class View {
                 }
             }
             return null;
+        }
+
+        @Override
+        public void updateDay(int day) {
+            SwingUtilities.invokeLater(() -> {
+                if (dayLabel != null) {
+                    dayLabel.setText("Day: " + day);
+                }
+            });
         }
     }
 }

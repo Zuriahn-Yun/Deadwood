@@ -220,6 +220,7 @@ public class Controller {
             // Day Loop
             for (int i = 1; i < model.getTotalDays() + 1; i++) {
                 model.newDay();
+                view.updateDay(model.currDay);
                 view.updateBoard(model.board.getSets());
                 while (model.board.getRemainingScenes() > 1) {
                     for (Player player : model.getPlayers()) {
